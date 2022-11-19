@@ -31,8 +31,8 @@ type ILoginForm = {
 
 export const LoginScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const ref_input2 = useRef<TextInput>(null);
-  const ref_input3 = useRef<TextInput>(null);
+  const ref_email_input = useRef<TextInput>(null);
+  const ref_password_input = useRef<TextInput>(null);
 
   const {
     control,
@@ -51,7 +51,7 @@ export const LoginScreen = () => {
   };
 
   useEffect(() => {
-    ref_input2.current?.focus();
+    ref_email_input.current?.focus();
   }, []);
 
   return (
@@ -71,11 +71,11 @@ export const LoginScreen = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 style={styles.textInput}
-                ref={ref_input2}
+                ref={ref_email_input}
                 value={value}
                 onSubmitEditing={() => {
-                  if (ref_input3.current) {
-                    ref_input3.current.focus();
+                  if (ref_password_input.current) {
+                    ref_password_input.current.focus();
                   }
                 }}
                 autoCapitalize="words"
@@ -94,7 +94,7 @@ export const LoginScreen = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 style={styles.textInput}
-                ref={ref_input3}
+                ref={ref_password_input}
                 value={value}
                 onChangeText={onChange}
                 returnKeyType="done"

@@ -116,6 +116,11 @@ export const RegisterScreen = () => {
               <TextInput
                 style={styles.textInput}
                 ref={ref_password_input}
+                onSubmitEditing={() => {
+                  if (ref_confirm_password_input.current) {
+                    ref_confirm_password_input.current.focus();
+                  }
+                }}
                 value={value}
                 onChangeText={onChange}
                 returnKeyType="done"
@@ -132,6 +137,7 @@ export const RegisterScreen = () => {
                 style={styles.textInput}
                 ref={ref_confirm_password_input}
                 value={value}
+                onSubmitEditing={handleSubmit(submitForm)}
                 onChangeText={onChange}
                 returnKeyType="done"
                 placeholder="Confirm password"
