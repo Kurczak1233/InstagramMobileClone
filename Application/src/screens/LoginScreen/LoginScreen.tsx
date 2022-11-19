@@ -9,64 +9,57 @@ import {
   Button,
   Keyboard,
   Platform,
-  KeyboardAvoidingView,
   TextInput,
+  KeyboardAvoidingView,
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
 import * as yup from "yup";
 
-import { RootStackParamList } from "../components/Navigation/RootStackParamList";
-import { supaBaseclient } from "../utilities/supabaseClient";
+import { RootStackParamList } from "../../components/Navigation/RootStackParamList";
+import { saveSecuredItem } from "../../utilities/secureStorage";
+import { supaBaseclient } from "../../utilities/supabaseClient";
 
 const schema = yup.object().shape({
   login: yup.string().email().required(),
   password: yup.string().min(8).max(32).required(),
-  confirmPassword: yup
-    .string()
-    .min(8)
-    .max(32)
-    .required()
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
-type IRegisterForm = {
+type ILoginForm = {
   login: string;
   password: string;
-  confirmPassword: string;
 };
 
-export const RegisterScreen = () => {
+export const LoginScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const ref_email_input = useRef<TextInput>(null);
   const ref_password_input = useRef<TextInput>(null);
-  const ref_confirm_password_input = useRef<TextInput>(null);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IRegisterForm>({
+  } = useForm<ILoginForm>({
     defaultValues: {
       login: "",
       password: "",
-      confirmPassword: "",
     },
     resolver: yupResolver<yup.AnyObjectSchema>(schema),
   });
 
-  const submitForm = async (data: IRegisterForm) => {
+  const submitForm = async (data: ILoginForm) => {
     try {
-      const response = await supaBaseclient.auth.signUp({
+      const response = await supaBaseclient.auth.signInWithPassword({
         email: data.login,
         password: data.password,
       });
       if (response.data && response.data.session?.access_token) {
-        navigation.navigate("Login");
+        saveSecuredItem("accees_token", response.data.session.access_token);
+        navigation.navigate("MainTabs");
       }
     } catch (error) {
-      console.log("Register went wrong", error);
+      console.log("Login went wrong", error);
     }
   };
 
@@ -84,7 +77,7 @@ export const RegisterScreen = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <View style={styles.scrollView}>
+        <View>
           <Controller
             control={control}
             name="login"
@@ -116,42 +109,23 @@ export const RegisterScreen = () => {
               <TextInput
                 style={styles.textInput}
                 ref={ref_password_input}
-                onSubmitEditing={() => {
-                  if (ref_confirm_password_input.current) {
-                    ref_confirm_password_input.current.focus();
-                  }
-                }}
                 value={value}
                 onChangeText={onChange}
                 returnKeyType="done"
-                placeholder="Password"
-                secureTextEntry
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="confirmPassword"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.textInput}
-                ref={ref_confirm_password_input}
-                value={value}
                 onSubmitEditing={handleSubmit(submitForm)}
-                onChangeText={onChange}
-                returnKeyType="done"
-                placeholder="Confirm password"
+                placeholder="Password"
                 secureTextEntry
               />
             )}
           />
           {errors.login && <Text>{errors.login.message}</Text>}
           {errors.password && <Text>{errors.password.message}</Text>}
-          {errors.confirmPassword && (
-            <Text>{errors.confirmPassword.message}</Text>
-          )}
           <TouchableOpacity>
-            <Button title="Register" onPress={handleSubmit(submitForm)} />
+            <Button title="Login" onPress={handleSubmit(submitForm)} />
+            <Button
+              title="Sign up"
+              onPress={() => navigation.navigate("Register")}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -168,9 +142,6 @@ const styles = StyleSheet.create({
   inner: {
     flex: 1,
     justifyContent: "center",
-  },
-  scrollView: {
-    paddingHorizontal: 20,
   },
   textInput: {
     padding: 12,
