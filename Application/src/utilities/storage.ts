@@ -24,4 +24,3 @@ export const removeItem = async (key: string) => {
     console.error(error);
   }
 };
-
