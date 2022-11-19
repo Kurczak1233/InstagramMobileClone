@@ -1,13 +1,10 @@
-import { useNavigation } from "@react-navigation/native";
-import type { StackNavigationProp } from "@react-navigation/stack";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import { View, FlatList, Text } from "react-native";
 
-import { RootStackParamList } from "../../components/Navigation/RootStackParamList";
-import { TopUserBar } from "../../components/PlatformMain";
-import { PostOverview } from "../../components/Posts/PostOverview/PostOverview";
-import { supaBaseclient } from "../../utilities/supabaseClient";
+import { TopUserBar } from "../../../components/PlatformMain";
+import { PostOverview } from "../../../components/Posts/PostOverview/PostOverview";
+import { supaBaseclient } from "../../../utilities/supabaseClient";
 import { styles } from "./styles";
 
 export const PlatformMainScreen = () => {
@@ -25,7 +22,7 @@ export const PlatformMainScreen = () => {
       return response.data;
     },
   });
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  
 
   const createPost = useCallback(async () => {
     // const response = await supaBaseclient
@@ -62,6 +59,7 @@ export const PlatformMainScreen = () => {
             <PostOverview
               description={item.description}
               imageUrl={item.image_url}
+              postId={item.id}
             />
           )}
         />

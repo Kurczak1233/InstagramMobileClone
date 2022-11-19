@@ -7,19 +7,34 @@ import React from "react";
 
 import { IntroductionScreen } from "../../screens/IntroductionScreen/IntroductionScreen";
 import { LoginScreen } from "../../screens/LoginScreen/LoginScreen";
-import { PlatformMainScreen } from "../../screens/PlatformMainScreen/PlatformMainScreen";
+import { PostDetailsScreen } from "../../screens/PlatformMainScreen/PostDetailsScreen/PostDetailsScreen";
+import { PlatformMainScreen } from "../../screens/PlatformMainScreen/PostsScreen/PlatformMainScreen";
 import { RegisterScreen } from "../../screens/RegisterScreen/RegisterScreen";
 import { RootStackParamList } from "./RootStackParamList";
+import { PlatformMainParamList } from "./platformMainParamList";
 import { StackTabsParamList } from "./stackTabsParamsList";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<StackTabsParamList>();
+const PlatformMainStack = createNativeStackNavigator<PlatformMainParamList>();
+
+function HomeStackScreen() {
+  return (
+    <PlatformMainStack.Navigator initialRouteName="Posts">
+      <PlatformMainStack.Screen name="Posts" component={PlatformMainScreen} />
+      <PlatformMainStack.Screen
+        name="PostDetails"
+        component={PostDetailsScreen}
+      />
+    </PlatformMainStack.Navigator>
+  );
+}
 
 const MainTabs = () => (
   <Tabs.Navigator initialRouteName="PlatformMain">
     <Tabs.Screen
       name="PlatformMain"
-      component={PlatformMainScreen}
+      component={HomeStackScreen}
       options={{
         tabBarLabel: "Main",
         tabBarIcon: ({ color, size }) => (
