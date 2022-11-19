@@ -18,13 +18,20 @@ import {
 import * as yup from "yup";
 
 import { RootStackParamList } from "../components/Navigation/RootStackParamList";
+import { supaBaseclient } from "../utilities/supabaseClient";
 
 const schema = yup.object().shape({
   login: yup.string().email().required(),
-  password: yup.string().required(),
+  password: yup.string().min(8).max(32).required(),
+  confirmPassword: yup
+    .string()
+    .min(8)
+    .max(32)
+    .required()
+    .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
-export type IRegisterForm = {
+type IRegisterForm = {
   login: string;
   password: string;
   confirmPassword: string;
@@ -32,8 +39,9 @@ export type IRegisterForm = {
 
 export const RegisterScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const ref_input2 = useRef<TextInput>(null);
-  const ref_input3 = useRef<TextInput>(null);
+  const ref_email_input = useRef<TextInput>(null);
+  const ref_password_input = useRef<TextInput>(null);
+  const ref_confirm_password_input = useRef<TextInput>(null);
 
   const {
     control,
@@ -48,15 +56,24 @@ export const RegisterScreen = () => {
     resolver: yupResolver<yup.AnyObjectSchema>(schema),
   });
 
-  const submitForm = (data: IRegisterForm) => {
-    //Jeśli success to przekeruj na login z powrotem.
-    console.log("form submitted", data);
+  const submitForm = async (data: IRegisterForm) => {
+    try {
+      const response = await supaBaseclient.auth.signUp({
+        email: data.login,
+        password: data.password,
+      });
+      if (response.data && response.data.session?.access_token) {
+        navigation.navigate("Login");
+      }
+    } catch (error) {
+      console.log("Register went wrong", error);
+    }
   };
 
-
   useEffect(() => {
-    ref_input2.current?.focus();
+    ref_email_input.current?.focus();
   }, []);
+
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -67,18 +84,18 @@ export const RegisterScreen = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <View>
+        <View style={styles.scrollView}>
           <Controller
             control={control}
             name="login"
             render={({ field: { onChange, value } }) => (
               <TextInput
                 style={styles.textInput}
-                ref={ref_input2}
+                ref={ref_email_input}
                 value={value}
                 onSubmitEditing={() => {
-                  if (ref_input3.current) {
-                    ref_input3.current.focus();
+                  if (ref_password_input.current) {
+                    ref_password_input.current.focus();
                   }
                 }}
                 autoCapitalize="words"
@@ -88,6 +105,7 @@ export const RegisterScreen = () => {
                 blurOnSubmit={false}
                 returnKeyType="next"
                 placeholder="Email"
+                keyboardType="email-address"
               />
             )}
           />
@@ -97,7 +115,7 @@ export const RegisterScreen = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 style={styles.textInput}
-                ref={ref_input3}
+                ref={ref_password_input}
                 value={value}
                 onChangeText={onChange}
                 returnKeyType="done"
@@ -106,8 +124,26 @@ export const RegisterScreen = () => {
               />
             )}
           />
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                style={styles.textInput}
+                ref={ref_confirm_password_input}
+                value={value}
+                onChangeText={onChange}
+                returnKeyType="done"
+                placeholder="Confirm password"
+                secureTextEntry
+              />
+            )}
+          />
           {errors.login && <Text>{errors.login.message}</Text>}
           {errors.password && <Text>{errors.password.message}</Text>}
+          {errors.confirmPassword && (
+            <Text>{errors.confirmPassword.message}</Text>
+          )}
           <TouchableOpacity>
             <Button title="Register" onPress={handleSubmit(submitForm)} />
           </TouchableOpacity>
@@ -126,6 +162,9 @@ const styles = StyleSheet.create({
   inner: {
     flex: 1,
     justifyContent: "center",
+  },
+  scrollView: {
+    paddingHorizontal: 20,
   },
   textInput: {
     padding: 12,
