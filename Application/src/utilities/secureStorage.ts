@@ -1,8 +1,9 @@
-import SecureStore from "expo-secure-store";
+import * as SecureStore from "expo-secure-store";
 
 export const saveSecuredItem = async (key: string, value: any) => {
   try {
-    await SecureStore.setItemAsync(key, value);
+    const jsonValue = JSON.stringify(value);
+    await SecureStore.setItemAsync(key, jsonValue);
   } catch (error) {
     console.log("Setting secure item went wrong", error);
   }

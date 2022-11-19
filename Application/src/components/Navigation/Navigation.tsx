@@ -4,6 +4,7 @@ import React from "react";
 
 import { IntroductionScreen } from "../../screens/IntroductionScreen";
 import { LoginScreen } from "../../screens/LoginScreen";
+import { PlatformMainScreen } from "../../screens/PlatformMainScreen/PlatformMainScreen";
 import { RegisterScreen } from "../../screens/RegisterScreen";
 import { RootStackParamList } from "./RootStackParamList";
 
@@ -16,6 +17,7 @@ export const Navigation = () => {
         <Stack.Screen name="Introduction" component={IntroductionScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="PlatformMain" component={PlatformMainScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

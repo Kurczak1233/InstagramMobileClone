@@ -18,6 +18,8 @@ import {
 import * as yup from "yup";
 
 import { RootStackParamList } from "../components/Navigation/RootStackParamList";
+import { saveSecuredItem } from "../utilities/secureStorage";
+import { supaBaseclient } from "../utilities/supabaseClient";
 
 const schema = yup.object().shape({
   login: yup.string().email().required(),
@@ -46,8 +48,20 @@ export const LoginScreen = () => {
     resolver: yupResolver<yup.AnyObjectSchema>(schema),
   });
 
-  const submitForm = (data: ILoginForm) => {
-    console.log("form submitted", data);
+  const submitForm = async (data: ILoginForm) => {
+    try {
+      console.log("Lol?");
+      const response = await supaBaseclient.auth.signInWithPassword({
+        email: data.login,
+        password: data.password,
+      });
+      if (response.data && response.data.session?.access_token) {
+        saveSecuredItem("accees_token", response.data.session.access_token);
+        navigation.navigate("PlatformMain");
+      }
+    } catch (error) {
+      console.log("Login went wrong", error);
+    }
   };
 
   useEffect(() => {
@@ -85,6 +99,7 @@ export const LoginScreen = () => {
                 blurOnSubmit={false}
                 returnKeyType="next"
                 placeholder="Email"
+                keyboardType="email-address"
               />
             )}
           />
@@ -98,6 +113,7 @@ export const LoginScreen = () => {
                 value={value}
                 onChangeText={onChange}
                 returnKeyType="done"
+                onSubmitEditing={handleSubmit(submitForm)}
                 placeholder="Password"
                 secureTextEntry
               />
