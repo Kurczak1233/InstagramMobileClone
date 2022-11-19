@@ -23,7 +23,7 @@ import { supaBaseclient } from "../../utilities/supabaseClient";
 
 const schema = yup.object().shape({
   login: yup.string().email().required(),
-  password: yup.string().min(8).max(32).required(),
+  password: yup.string().required(),
 });
 
 type ILoginForm = {
@@ -39,6 +39,7 @@ export const LoginScreen = () => {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<ILoginForm>({
     defaultValues: {
@@ -54,10 +55,15 @@ export const LoginScreen = () => {
         email: data.login,
         password: data.password,
       });
+      // TODO return error when the password does not match
       if (response.data && response.data.session?.access_token) {
         saveSecuredItem("accees_token", response.data.session.access_token);
         navigation.navigate("MainTabs");
       }
+      setError("password", {
+        type: "custom",
+        message: "Logging attempt unsuccessful",
+      });
     } catch (error) {
       console.log("Login went wrong", error);
     }
