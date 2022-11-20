@@ -91,8 +91,6 @@ export const Navigation = () => {
     handleUserLoggedCheck();
   }, []);
 
-  console.log(isLoggedIn);
-
   if (isLoading) {
     return (
       <View>

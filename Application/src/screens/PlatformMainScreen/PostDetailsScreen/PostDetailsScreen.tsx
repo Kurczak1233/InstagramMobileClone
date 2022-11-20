@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   View,
@@ -17,6 +17,7 @@ import {
 import * as yup from "yup";
 
 import { PostComment } from "../../../components/Posts";
+import { UserAvatar } from "../../../components/UserAvatar";
 import { supaBaseclient } from "../../../utilities/supabaseClient";
 import { styles } from "./styles";
 type PostDetailsScreenRouteParams = {
@@ -45,8 +46,8 @@ export const PostDetailsScreen = () => {
   const {
     isLoading,
     error,
-    data: post,
     refetch,
+    data: post,
   } = useQuery({
     queryKey: ["postData"],
     queryFn: async () => {
@@ -62,6 +63,10 @@ export const PostDetailsScreen = () => {
     },
   });
 
+  useEffect(() => {
+    refetch();
+  }, []);
+
   const {
     control,
     handleSubmit,
@@ -76,19 +81,24 @@ export const PostDetailsScreen = () => {
   console.log(post?.comments);
 
   const createPostComment = async (body: ICreateComment) => {
-    // create a comment
-    const response = await supaBaseclient
-      .from("comments")
-      .insert({
-        body: body.description,
-        post_id: id,
-      })
-      .limit(1)
-      .single();
-    refetch();
+    try {
+      await supaBaseclient
+        .from("comments")
+        .insert({
+          body: body.description,
+          post_id: id,
+        })
+        .limit(1)
+        .single();
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  if (isLoading) {
+  console.log(post);
+
+  if (isLoading || !post) {
     return (
       <View>
         <Text>Loading...</Text>
@@ -102,17 +112,16 @@ export const PostDetailsScreen = () => {
           <Image
             style={styles.image}
             source={{
-              uri: post?.image_url,
+              uri: post.image_url,
             }}
           />
           <View>
             <View>
-              <Text>Image</Text>
-              <Text>Somebody</Text>
+              <UserAvatar userId={post?.creator_uuid} imageSize="small" />
             </View>
             <View>
               <Text>14 Likes</Text>
-              <Text>Title: {post?.description}</Text>
+              <Text>Title: {post.description}</Text>
             </View>
           </View>
           <FlatList
