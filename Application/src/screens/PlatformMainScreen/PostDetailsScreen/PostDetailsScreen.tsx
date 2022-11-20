@@ -14,7 +14,6 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
-  ScrollView,
 } from "react-native";
 import * as yup from "yup";
 
@@ -70,7 +69,7 @@ export const PostDetailsScreen = () => {
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [id]);
 
   const {
     control,
