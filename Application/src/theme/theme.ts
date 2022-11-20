@@ -20,6 +20,7 @@ const theme = {
     primary: "#88A5BF",
     primary200: "#3B4B59",
     secondary: "#D9BFA9",
+    overlay: "##E5E5E5",
     error: "##FF3900",
     black: "#1D2341",
   },
