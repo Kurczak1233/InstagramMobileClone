@@ -1,7 +1,7 @@
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useQuery } from "@tanstack/react-query";
 import React, { useCallback, useEffect } from "react";
 import { View, FlatList, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TopUserBar } from "../../../components/PlatformMain";
 import { PostOverview } from "../../../components/Posts/PostOverview/PostOverview";
@@ -9,6 +9,8 @@ import { supaBaseclient } from "../../../utilities/supabaseClient";
 import { styles } from "./styles";
 
 export const PlatformMainScreen = () => {
+  const tabBarHeight = useBottomTabBarHeight();
+
   const {
     isLoading,
     error,
@@ -49,7 +51,7 @@ export const PlatformMainScreen = () => {
     );
   }
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { marginBottom: tabBarHeight }]}>
       <TopUserBar />
       <View style={styles.post}>
         <FlatList
@@ -64,6 +66,6 @@ export const PlatformMainScreen = () => {
           )}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };

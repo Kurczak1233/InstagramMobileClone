@@ -8,7 +8,7 @@ type IUserAvatar = {
   userId?: string;
   showUserName?: boolean;
   imageUrl?: string;
-  imageSize: "small" | "large";
+  imageSize: "tiny" | "small" | "large";
 };
 
 export const UserAvatar = ({

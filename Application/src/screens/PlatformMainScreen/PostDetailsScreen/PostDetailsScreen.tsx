@@ -11,8 +11,6 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
-  ScrollView,
 } from "react-native";
 import * as yup from "yup";
 
@@ -65,7 +63,7 @@ export const PostDetailsScreen = () => {
 
   useEffect(() => {
     refetch();
-  }, [id]);
+  }, []);
 
   const {
     control,
@@ -77,8 +75,6 @@ export const PostDetailsScreen = () => {
     },
     resolver: yupResolver<yup.AnyObjectSchema>(schema),
   });
-
-  console.log(post?.comments);
 
   const createPostComment = async (body: ICreateComment) => {
     try {
@@ -96,9 +92,7 @@ export const PostDetailsScreen = () => {
     }
   };
 
-  console.log(post);
-
-  if (isLoading || !post) {
+  if (isLoading) {
     return (
       <View>
         <Text>Loading...</Text>
@@ -106,59 +100,63 @@ export const PostDetailsScreen = () => {
     );
   }
   return (
-    <SafeAreaView style={styles.saveAreaContainer}>
-      <ScrollView>
-        <View style={styles.container}>
-          <Image
-            style={styles.image}
-            source={{
-              uri: post.image_url,
-            }}
-          />
-          <View>
-            <View>
-              <UserAvatar userId={post?.creator_uuid} imageSize="small" />
-            </View>
-            <View>
-              <Text>14 Likes</Text>
-              <Text>Title: {post.description}</Text>
-            </View>
-          </View>
-          <FlatList
-            data={post?.comments as any[]}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <PostComment
-                body={item.body}
-                creator_uuid={item.creator_uuid}
-                id={item.id}
+    <View style={styles.saveAreaContainer}>
+      <View style={styles.container}>
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <Image
+                style={styles.image}
+                source={{
+                  uri: post?.image_url,
+                }}
               />
-            )}
-          />
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.container}
-          >
-            <Controller
-              control={control}
-              name="description"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.textInput}
-                  value={value}
-                  onSubmitEditing={handleSubmit(createPostComment)}
-                  autoCapitalize="words"
-                  autoComplete="off"
-                  onChangeText={onChange}
-                  blurOnSubmit={false}
-                  returnKeyType="next"
-                  placeholder="Comment..."
-                />
-              )}
+              <View>
+                <View>
+                  <UserAvatar userId={post?.creator_uuid} imageSize="small" />
+                </View>
+                <View>
+                  <Text>14 Likes</Text>
+                  <Text>Title: {post?.description}</Text>
+                </View>
+              </View>
+            </>
+          }
+          data={post?.comments as any[]}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <PostComment
+              body={item.body}
+              creator_uuid={item.creator_uuid}
+              id={item.id}
             />
-          </KeyboardAvoidingView>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          )}
+          ListFooterComponent={
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={styles.container}
+            >
+              <Controller
+                control={control}
+                name="description"
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    style={styles.textInput}
+                    value={value}
+                    onSubmitEditing={handleSubmit(createPostComment)}
+                    autoCapitalize="words"
+                    autoComplete="off"
+                    onChangeText={onChange}
+                    blurOnSubmit={false}
+                    returnKeyType="next"
+                    placeholder="Comment..."
+                  />
+                )}
+              />
+            </KeyboardAvoidingView>
+          }
+        />
+      </View>
+    </View>
   );
 };

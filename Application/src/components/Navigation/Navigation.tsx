@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { CreatePostScreen } from "../../screens/CreatePostScreen/CreatePostScreen";
 import { IntroductionScreen } from "../../screens/IntroductionScreen/IntroductionScreen";
@@ -41,7 +42,10 @@ function HomeStackScreen() {
 const MainTabs = () => (
   <Tabs.Navigator
     initialRouteName="PlatformMain"
-    screenOptions={{ headerShown: false }}
+    screenOptions={{
+      headerShown: false,
+      tabBarHideOnKeyboard: true,
+    }}
   >
     <Tabs.Screen
       name="PlatformMain"
@@ -108,22 +112,27 @@ export const Navigation = () => {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {!isLoggedIn ? (
-          <>
-            <Stack.Screen name="Introduction" component={IntroductionScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-          </>
-        ) : (
-          <Stack.Screen
-            name="MainTabs"
-            component={MainTabs}
-            options={{ headerShown: false }}
-          />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {!isLoggedIn ? (
+            <>
+              <Stack.Screen
+                name="Introduction"
+                component={IntroductionScreen}
+              />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
+            </>
+          ) : (
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabs}
+              options={{ headerShown: false }}
+            />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 };
