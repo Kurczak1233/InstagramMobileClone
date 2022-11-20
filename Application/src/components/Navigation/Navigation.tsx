@@ -3,7 +3,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text } from "react-native";
 
 import { CreatePostScreen } from "../../screens/CreatePostScreen/CreatePostScreen";
 import { IntroductionScreen } from "../../screens/IntroductionScreen/IntroductionScreen";
@@ -13,6 +14,7 @@ import { PostDetailsScreen } from "../../screens/PlatformMainScreen/PostDetailsS
 import { PlatformMainScreen } from "../../screens/PlatformMainScreen/PostsScreen/PlatformMainScreen";
 import { RegisterScreen } from "../../screens/RegisterScreen/RegisterScreen";
 import { SearchPostScreen } from "../../screens/SearchPostScreen/SearchPostScreen";
+import { getValueFor } from "../../utilities/secureStorage";
 import { RootStackParamList } from "./RootStackParamList";
 import { PlatformMainParamList } from "./platformMainParamList";
 import { StackTabsParamList } from "./stackTabsParamsList";
@@ -76,13 +78,41 @@ const MainTabs = () => (
   </Tabs.Navigator>
 );
 export const Navigation = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const handleUserLoggedCheck = useCallback(async () => {
+    const accessToken = await getValueFor("accees_token");
+    setIsLoggedIn(accessToken !== undefined && accessToken !== "");
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    handleUserLoggedCheck();
+  }, []);
+
+  console.log(isLoggedIn);
+
+  if (isLoading) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Introduction" component={IntroductionScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="MainTabs" component={MainTabs} />
+        {!isLoggedIn ? (
+          <>
+            <Stack.Screen name="Introduction" component={IntroductionScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
+        ) : (
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
