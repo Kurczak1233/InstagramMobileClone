@@ -5,11 +5,18 @@ import { View, Text } from "react-native";
 import { supaBaseclient } from "../../utilities/supabaseClient";
 
 type IUserAvatar = {
-  userId: string;
+  userId?: string;
+  showUserName?: boolean;
+  imageUrl?: string;
   imageSize: "small" | "large";
 };
 
-export const UserAvatar = ({ userId, imageSize }: IUserAvatar) => {
+export const UserAvatar = ({
+  userId,
+  imageSize,
+  imageUrl,
+  showUserName = true,
+}: IUserAvatar) => {
   const {
     isLoading,
     error,
@@ -26,12 +33,14 @@ export const UserAvatar = ({ userId, imageSize }: IUserAvatar) => {
     },
   });
 
-  console.log(user);
-
   return (
-    <View>
-      <Avatar size={imageSize === "large" ? 100 : 50} label={"Somebody"} />
-      <Text>Somebody</Text>
+    <View style={{ minHeight: imageSize === "large" ? 100 : 50 }}>
+      <Avatar
+        size={imageSize === "large" ? 100 : 50}
+        image={{ uri: imageUrl }}
+        label={showUserName ? "Somebody" : ""}
+      />
+      {showUserName && <Text>Somebody</Text>}
     </View>
   );
 };
