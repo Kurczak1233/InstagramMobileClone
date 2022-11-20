@@ -48,7 +48,7 @@ export const CreatePostScreen = () => {
 
   const submitForm = async (data: ICreatePost) => {
     try {
-      const result = await supaBaseclient
+      await supaBaseclient
         .from("posts")
         .insert({
           description: data.title,
@@ -56,8 +56,6 @@ export const CreatePostScreen = () => {
         })
         .limit(1)
         .single();
-      console.log(result);
-      console.log("Did navigate?");
       navigation.navigate("PlatformMain");
     } catch (error) {
       console.log("Register went wrong", error);

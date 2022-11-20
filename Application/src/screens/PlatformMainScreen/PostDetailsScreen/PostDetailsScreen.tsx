@@ -1,4 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
@@ -11,11 +12,15 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import * as yup from "yup";
 
 import { PostComment } from "../../../components/Posts";
 import { UserAvatar } from "../../../components/UserAvatar";
+import useKeyboardVisible from "../../../hooks/useIsKeyboardVisible";
 import { supaBaseclient } from "../../../utilities/supabaseClient";
 import { styles } from "./styles";
 type PostDetailsScreenRouteParams = {
@@ -37,6 +42,8 @@ const schema = yup.object().shape({
 });
 
 export const PostDetailsScreen = () => {
+  const tabBarHeight = useBottomTabBarHeight();
+  const { isKeyboardVisible } = useKeyboardVisible();
   const route =
     useRoute<RouteProp<Record<string, PostDetailsScreenRouteParams>, string>>();
   const { id } = route.params;
@@ -100,63 +107,59 @@ export const PostDetailsScreen = () => {
     );
   }
   return (
-    <View style={styles.saveAreaContainer}>
-      <View style={styles.container}>
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <Image
-                style={styles.image}
-                source={{
-                  uri: post?.image_url,
-                }}
-              />
-              <View>
-                <View>
-                  <UserAvatar userId={post?.creator_uuid} imageSize="small" />
-                </View>
-                <View>
-                  <Text>14 Likes</Text>
-                  <Text>Title: {post?.description}</Text>
-                </View>
-              </View>
-            </>
-          }
-          data={post?.comments as any[]}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <PostComment
-              body={item.body}
-              creator_uuid={item.creator_uuid}
-              id={item.id}
-            />
-          )}
-          ListFooterComponent={
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={styles.container}
-            >
-              <Controller
-                control={control}
-                name="description"
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    style={styles.textInput}
-                    value={value}
-                    onSubmitEditing={handleSubmit(createPostComment)}
-                    autoCapitalize="words"
-                    autoComplete="off"
-                    onChangeText={onChange}
-                    blurOnSubmit={false}
-                    returnKeyType="next"
-                    placeholder="Comment..."
-                  />
-                )}
-              />
-            </KeyboardAvoidingView>
-          }
-        />
+    <View
+      style={[
+        styles.container,
+        { marginBottom: !isKeyboardVisible ? tabBarHeight : 0 },
+      ]}
+    >
+      <Image
+        style={[styles.image]}
+        source={{
+          uri: post?.image_url,
+        }}
+      />
+      <UserAvatar userId={post?.creator_uuid} imageSize="small" />
+      <View>
+        <Text>14 Likes</Text>
+        <Text>Title: {post?.description}</Text>
       </View>
+      <FlatList
+        data={post?.comments as any[]}
+        scrollEnabled
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <PostComment
+            body={item.body}
+            creator_uuid={item.creator_uuid}
+            id={item.id}
+          />
+        )}
+      />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.container}
+        >
+          <Controller
+            control={control}
+            name="description"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                style={styles.textInput}
+                value={value}
+                onSubmitEditing={handleSubmit(createPostComment)}
+                autoCapitalize="words"
+                autoComplete="off"
+                onChangeText={onChange}
+                blurOnSubmit={false}
+                returnKeyType="next"
+                placeholder="Comment..."
+              />
+            )}
+          />
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </View>
   );
 };

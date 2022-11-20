@@ -5,11 +5,13 @@ import { View, FlatList, Text } from "react-native";
 
 import { TopUserBar } from "../../../components/PlatformMain";
 import { PostOverview } from "../../../components/Posts/PostOverview/PostOverview";
+import useKeyboardVisible from "../../../hooks/useIsKeyboardVisible";
 import { supaBaseclient } from "../../../utilities/supabaseClient";
 import { styles } from "./styles";
 
 export const PlatformMainScreen = () => {
   const tabBarHeight = useBottomTabBarHeight();
+  const { isKeyboardVisible } = useKeyboardVisible();
 
   const {
     isLoading,
@@ -51,7 +53,12 @@ export const PlatformMainScreen = () => {
     );
   }
   return (
-    <View style={[styles.container, { marginBottom: tabBarHeight }]}>
+    <View
+      style={[
+        styles.container,
+        { marginBottom: !isKeyboardVisible ? tabBarHeight : 0 },
+      ]}
+    >
       <TopUserBar />
       <View style={styles.post}>
         <FlatList
