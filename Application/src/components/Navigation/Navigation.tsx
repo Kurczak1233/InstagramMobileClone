@@ -5,11 +5,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
+import { CreatePostScreen } from "../../screens/CreatePostScreen/CreatePostScreen";
 import { IntroductionScreen } from "../../screens/IntroductionScreen/IntroductionScreen";
 import { LoginScreen } from "../../screens/LoginScreen/LoginScreen";
+import { MyTimeLine } from "../../screens/MyTimeLine/MyTimeLine";
 import { PostDetailsScreen } from "../../screens/PlatformMainScreen/PostDetailsScreen/PostDetailsScreen";
 import { PlatformMainScreen } from "../../screens/PlatformMainScreen/PostsScreen/PlatformMainScreen";
 import { RegisterScreen } from "../../screens/RegisterScreen/RegisterScreen";
+import { SearchPostScreen } from "../../screens/SearchPostScreen/SearchPostScreen";
 import { RootStackParamList } from "./RootStackParamList";
 import { PlatformMainParamList } from "./platformMainParamList";
 import { StackTabsParamList } from "./stackTabsParamsList";
@@ -44,7 +47,7 @@ const MainTabs = () => (
     />
     <Tabs.Screen
       name="SearchPosts"
-      component={() => null}
+      component={SearchPostScreen}
       options={{
         tabBarLabel: "Search post",
         tabBarIcon: () => <FontAwesome name="search" size={24} color="black" />,
@@ -52,7 +55,7 @@ const MainTabs = () => (
     />
     <Tabs.Screen
       name="CreatePost"
-      component={() => null}
+      component={CreatePostScreen}
       options={{
         tabBarLabel: "Create post",
         tabBarIcon: () => (
@@ -62,7 +65,7 @@ const MainTabs = () => (
     />
     <Tabs.Screen
       name="MyTimeLine"
-      component={() => null}
+      component={MyTimeLine}
       options={{
         tabBarLabel: "My timeline",
         tabBarIcon: () => (

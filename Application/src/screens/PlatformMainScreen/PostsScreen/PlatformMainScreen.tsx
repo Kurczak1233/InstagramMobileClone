@@ -22,7 +22,6 @@ export const PlatformMainScreen = () => {
       return response.data;
     },
   });
-  
 
   const createPost = useCallback(async () => {
     // const response = await supaBaseclient

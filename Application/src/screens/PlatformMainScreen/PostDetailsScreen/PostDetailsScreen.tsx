@@ -1,8 +1,9 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { View, Text } from "react-native";
+import { View, Image, Text } from "react-native";
 
 import { supaBaseclient } from "../../../utilities/supabaseClient";
+import { styles } from "./styles";
 
 type PostDetailsScreenRouteParams = {
   id: number;
@@ -35,12 +36,23 @@ export const PostDetailsScreen = () => {
   console.log(post);
 
   return (
-    <View>
-      <Text>Post Screen</Text>
-      {/* <Buttons
-        title="Start your journey"
-        onPress={() => navigation.navigate("Login")}
-      /> */}
+    <View style={styles.container}>
+      <Image
+        style={styles.image}
+        source={{
+          uri: post?.image_url,
+        }}
+      />
+      {/* <View>
+        <View>
+          <Text>Image</Text>
+          <Text>Somebody</Text>
+        </View>
+        <View>
+          <Text>Image</Text>
+          <Text>{post?.description}</Text>
+        </View>
+      </View> */}
     </View>
   );
 };
