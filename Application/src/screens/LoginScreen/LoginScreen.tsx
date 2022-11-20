@@ -59,6 +59,7 @@ export const LoginScreen = () => {
       if (response.data && response.data.session?.access_token) {
         saveSecuredItem("accees_token", response.data.session.access_token);
         navigation.navigate("MainTabs");
+        return;
       }
       setError("password", {
         type: "custom",
