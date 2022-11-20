@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, FlatList, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TopUserBar } from "../../../components/PlatformMain";
 import { PostOverview } from "../../../components/Posts/PostOverview/PostOverview";
@@ -48,7 +49,7 @@ export const PlatformMainScreen = () => {
     );
   }
   return (
-    <View>
+    <SafeAreaView style={styles.container}>
       <TopUserBar />
       <View style={styles.post}>
         <FlatList
@@ -63,6 +64,6 @@ export const PlatformMainScreen = () => {
           )}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };

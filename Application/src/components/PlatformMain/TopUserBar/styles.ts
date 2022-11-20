@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     padding: theme.spacing.sm,
     flex: 1,
-    minHeight: 45,
+    minHeight: 60,
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignContent: "space-around",

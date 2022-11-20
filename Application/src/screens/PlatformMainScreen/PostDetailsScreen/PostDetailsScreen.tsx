@@ -65,7 +65,7 @@ export const PostDetailsScreen = () => {
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [id]);
 
   const {
     control,

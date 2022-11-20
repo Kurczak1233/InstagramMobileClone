@@ -6,4 +6,7 @@ export const styles = StyleSheet.create({
   post: {
     padding: theme.spacing.sm,
   },
+  container: {
+    flex: 1,
+  },
 });
