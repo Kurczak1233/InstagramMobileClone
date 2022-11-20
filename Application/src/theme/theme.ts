@@ -3,6 +3,7 @@ const theme = {
     body: 16,
     bodyLarge: 18,
     bodySmall: 14,
+    paragraph: 12,
     h1: 60,
     h2: 48,
     h3: 44,
