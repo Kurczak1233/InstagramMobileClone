@@ -3,7 +3,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { View, Text, Image, TouchableHighlight } from "react-native";
 
+import theme from "../../../theme/theme";
 import { PlatformMainParamList } from "../../Navigation/platformMainParamList";
+import Header from "../../typography/Header";
 import { styles } from "./styles";
 
 type IPostOverview = {
@@ -28,13 +30,17 @@ export const PostOverview = ({
     <View style={styles.imageContainer}>
       <TouchableHighlight onPress={navigateToPostPage}>
         <View>
-          <Text>{description}</Text>
+          <Header variant="h5" size="60px" color={theme.colors.primary}>
+            {description}
+          </Header>
           <Image
             style={styles.image}
             source={{
               uri: imageUrl,
             }}
           />
+          <Text>14 Likes</Text>
+          <Text>Somebody XDXDXDXDXD</Text>
         </View>
       </TouchableHighlight>
     </View>

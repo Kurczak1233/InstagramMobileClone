@@ -9,6 +9,9 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   imageContainer: {
-    padding: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.sm,
+    borderColor: theme.colors.primary,
+    borderWidth: 1,
+    margin: theme.spacing.sm,
   },
 });

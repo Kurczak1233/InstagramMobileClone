@@ -1,16 +1,16 @@
 import React from "react";
 import { Text } from "react-native";
 
+import styles from "./styles";
+
 interface IBodyChildren {
   children: React.ReactNode;
+  color?: string;
 }
 
-// - Paragraph
-//     - Should take `color` prop, default `#070B11`
-//     - Font size `12px`
-//     - Font weight `600`
-//     - Font family - TBD
-
-export default function Paragraph({ children }: IBodyChildren) {
-  return <Text>{children}</Text>;
+export default function Paragraph({
+  children,
+  color = "#070B11",
+}: IBodyChildren) {
+  return <Text style={[styles.textParagraph, { color }]}>{children}</Text>;
 }
