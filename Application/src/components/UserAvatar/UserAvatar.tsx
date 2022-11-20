@@ -22,7 +22,7 @@ export const UserAvatar = ({
     error,
     data: user,
   } = useQuery({
-    queryKey: ["postData"],
+    queryKey: ["userAvatar"],
     queryFn: async () => {
       const response = await supaBaseclient
         .from("users")
