@@ -25,7 +25,10 @@ const PlatformMainStack = createNativeStackNavigator<PlatformMainParamList>();
 
 function HomeStackScreen() {
   return (
-    <PlatformMainStack.Navigator initialRouteName="Posts">
+    <PlatformMainStack.Navigator
+      initialRouteName="Posts"
+      screenOptions={{ headerShown: false }}
+    >
       <PlatformMainStack.Screen name="Posts" component={PlatformMainScreen} />
       <PlatformMainStack.Screen
         name="PostDetails"
@@ -36,7 +39,10 @@ function HomeStackScreen() {
 }
 
 const MainTabs = () => (
-  <Tabs.Navigator initialRouteName="PlatformMain">
+  <Tabs.Navigator
+    initialRouteName="PlatformMain"
+    screenOptions={{ headerShown: false }}
+  >
     <Tabs.Screen
       name="PlatformMain"
       component={HomeStackScreen}
@@ -52,7 +58,9 @@ const MainTabs = () => (
       component={SearchPostScreen}
       options={{
         tabBarLabel: "Search post",
-        tabBarIcon: () => <FontAwesome name="search" size={24} color="black" />,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="md-search" size={size} color={color} />
+        ),
       }}
     />
     <Tabs.Screen
@@ -60,8 +68,8 @@ const MainTabs = () => (
       component={CreatePostScreen}
       options={{
         tabBarLabel: "Create post",
-        tabBarIcon: () => (
-          <MaterialIcons name="post-add" size={24} color="black" />
+        tabBarIcon: ({ color, size }) => (
+          <MaterialIcons name="post-add" size={size} color={color} />
         ),
       }}
     />
@@ -70,8 +78,8 @@ const MainTabs = () => (
       component={MyTimeLine}
       options={{
         tabBarLabel: "My timeline",
-        tabBarIcon: () => (
-          <FontAwesome name="user-circle-o" size={24} color="black" />
+        tabBarIcon: ({ color, size }) => (
+          <FontAwesome name="user-circle-o" size={size} color={color} />
         ),
       }}
     />
@@ -109,7 +117,11 @@ export const Navigation = () => {
             <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (
-          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen
+            name="MainTabs"
+            component={MainTabs}
+            options={{ headerShown: false }}
+          />
         )}
       </Stack.Navigator>
     </NavigationContainer>
