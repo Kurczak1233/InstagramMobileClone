@@ -23,9 +23,14 @@ import { queryClient } from "../../../../App";
 import { createCommentForPost } from "../../../apiCalls/createCommentForPost";
 import { deleteDatabasePost } from "../../../apiCalls/deleteDatabasePost";
 import { getPostData } from "../../../apiCalls/getPostData";
+import { getPostLikes } from "../../../apiCalls/getPostLikes";
+import { giveLike } from "../../../apiCalls/giveLike";
 import { PlatformMainParamList } from "../../../components/Navigation/platformMainParamList";
 import { PostComment } from "../../../components/Posts";
 import { UserAvatar } from "../../../components/UserAvatar";
+import Header from "../../../components/typography/Header";
+import Paragraph from "../../../components/typography/Paragraph";
+import theme from "../../../theme/theme";
 import { styles } from "./styles";
 type PostDetailsScreenRouteParams = {
   id: number;
@@ -55,11 +60,19 @@ export const PostDetailsScreen = () => {
   const {
     isLoading,
     error,
-    refetch,
     data: post,
   } = useQuery({
     queryKey: ["postData", id],
     queryFn: ({ queryKey }) => getPostData(+queryKey[1]),
+  });
+
+  const {
+    isLoading: likesLoading,
+    error: likesError,
+    data: postLikes,
+  } = useQuery({
+    queryKey: ["postLikes", id],
+    queryFn: ({ queryKey }) => getPostLikes(+queryKey[1]),
   });
 
   const {
@@ -76,7 +89,7 @@ export const PostDetailsScreen = () => {
   const createPostComment = async (body: ICreateComment) => {
     try {
       await createCommentForPost(body.description, post?.id);
-      refetch();
+      queryClient.invalidateQueries({ queryKey: ["postData"] });
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +105,15 @@ export const PostDetailsScreen = () => {
     }
   };
 
+  const giveLikeToPost = async () => {
+    try {
+      await giveLike(post?.id);
+      queryClient.invalidateQueries({ queryKey: ["postLikes"] });
+    } catch (err) {
+      console.log("Giving like went wrong", err);
+    }
+  };
+
   if (isLoading) {
     return (
       <View>
@@ -99,6 +121,7 @@ export const PostDetailsScreen = () => {
       </View>
     );
   }
+
   return (
     <View style={[styles.container]}>
       <Image
@@ -110,9 +133,17 @@ export const PostDetailsScreen = () => {
       <View style={styles.imageDetails}>
         <View style={styles.likesAndAvatarsContainer}>
           <UserAvatar userId={post?.creator_uuid} imageSize="small" />
-          <View>
-            <Text>14 Likes</Text>
-            <Text>Title: {post?.description}</Text>
+          <View style={styles.likesAndDescription}>
+            <View>
+              <Header variant="h5">{postLikes?.length} Likes</Header>
+              <Paragraph>Title: {post?.description}</Paragraph>
+            </View>
+            <TouchableOpacity
+              style={styles.likeButton}
+              onPress={giveLikeToPost}
+            >
+              <AntDesign name="like2" size={36} color={theme.colors.primary} />
+            </TouchableOpacity>
           </View>
         </View>
         <View>

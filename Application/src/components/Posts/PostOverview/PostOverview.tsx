@@ -1,11 +1,8 @@
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { View, Text, Image, TouchableHighlight } from "react-native";
-import useNavigateToPostPage from "../../../hooks/useNavigateToPostPage";
 
+import useNavigateToPostPage from "../../../hooks/useNavigateToPostPage";
 import theme from "../../../theme/theme";
-import { PlatformMainParamList } from "../../Navigation/platformMainParamList";
 import Header from "../../typography/Header";
 import { styles } from "./styles";
 

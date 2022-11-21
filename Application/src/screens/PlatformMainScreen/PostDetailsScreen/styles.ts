@@ -24,6 +24,17 @@ export const styles = StyleSheet.create({
   },
   likesAndAvatarsContainer: {
     paddingVertical: theme.spacing.sm,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  likesAndDescription: {
+    marginLeft: theme.spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  likeButton: {
+    marginLeft: theme.spacing.sm,
   },
   imageDetails: {
     flexDirection: "row",

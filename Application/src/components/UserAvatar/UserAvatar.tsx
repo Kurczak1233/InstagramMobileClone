@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { View, Text } from "react-native";
 
 import { getCurrentUser } from "../../apiCalls/getCurrentUser";
+import { styles } from "./styles";
 
 type IUserAvatar = {
   userId?: string;
@@ -27,7 +28,12 @@ export const UserAvatar = ({
   });
 
   return (
-    <View style={{ minHeight: imageSize === "large" ? 100 : 50 }}>
+    <View
+      style={[
+        styles.imageContainer,
+        { minHeight: imageSize === "large" ? 100 : 50 },
+      ]}
+    >
       <Avatar
         size={imageSize === "large" ? 100 : 50}
         image={{ uri: imageUrl }}
