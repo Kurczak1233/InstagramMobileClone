@@ -1,7 +1,14 @@
-import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import { CameraCapturedPicture } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Image, Text, FlatList, TouchableHighlight } from "react-native";
+import {
+  View,
+  Image,
+  Button,
+  Text,
+  FlatList,
+  TouchableHighlight,
+} from "react-native";
 
 import { INewPostComponent } from "../../../screens/CreatePostScreen/CreatePostScreen";
 import theme from "../../../theme/theme";
@@ -18,63 +25,26 @@ export const CameraRollComponent = ({
   setImage,
   changeVisibleComponent,
 }: ICameraaRollComponent) => {
-  const [availableImages, setAvailableImages] = useState<any[]>();
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-  const getAvailablePhotos = useCallback(() => {
-    CameraRoll.getPhotos({
-      first: 20,
-      assetType: "Photos",
-    })
-      .then((r) => {
-        setAvailableImages(r.edges);
-      })
-      .catch((err) => {
-        console.log("Getting images went wrong", err);
-      });
-  }, []);
-
-  useEffect(() => {
-    getAvailablePhotos();
-  }, []);
+    if (!result.canceled) {
+      console.log(result);
+      setImage(result.assets[0] as any);
+      changeVisibleComponent(INewPostComponent.overview);
+    }
+  };
 
   return (
     <View>
       <Text>CameraRoll</Text>
-      {/* {this.state.photos.map((p, i) => {
-       return (
-         <Image
-           key={i}
-           style={{
-             width: 300,
-             height: 100,
-           }}
-           source={{ uri: p.node.image.uri }}
-         />
-       );
-     })} */}
-
-      <FlatList
-        data={availableImages as any[]}
-        scrollEnabled
-        style={[styles.container]}
-        contentContainerStyle={styles.listContainer}
-        numColumns={3}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableHighlight
-            underlayColor={theme.colors.overlay}
-            //   onPress={() => handleImageClick(item.id)}
-            style={[styles.container]}
-          >
-            <View style={[styles.container, styles.imageContainer]}>
-              <Image
-                style={styles.smallImage}
-                source={{ uri: item.image_url }}
-              />
-            </View>
-          </TouchableHighlight>
-        )}
-      />
+      <Button title="Pick an image from camera roll" onPress={pickImage} />
     </View>
   );
 };
