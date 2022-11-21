@@ -14,6 +14,7 @@ import {
   TouchableHighlight,
 } from "react-native";
 
+import { queryClient } from "../../../App";
 import Header from "../../components/typography/Header";
 import useNavigateToPostPage from "../../hooks/useNavigateToPostPage";
 import theme from "../../theme/theme";
@@ -48,7 +49,6 @@ export const SearchPostScreen = () => {
 
   const {
     control,
-    handleSubmit,
     watch,
     formState: { errors },
   } = useForm<ISearchPosts>({
@@ -91,7 +91,11 @@ export const SearchPostScreen = () => {
     return filteredItems ? filteredItems : [];
   }, [posts, watch("searchPhrase")]);
 
-  const searchItems = () => {};
+  const handleImageClick = (itemId: number) => {
+    navigateToPostPage(itemId);
+    queryClient.invalidateQueries({ queryKey: ["postData"] });
+  };
+
   if (isLoading) {
     return (
       <View>
@@ -114,7 +118,6 @@ export const SearchPostScreen = () => {
                 <TextInput
                   style={styles.textInput}
                   value={value}
-                  onSubmitEditing={handleSubmit(searchItems)}
                   autoCapitalize="words"
                   autoComplete="off"
                   onChangeText={onChange}
@@ -141,7 +144,7 @@ export const SearchPostScreen = () => {
           renderItem={({ item }) => (
             <TouchableHighlight
               underlayColor={theme.colors.overlay}
-              onPress={() => navigateToPostPage(item.id)}
+              onPress={() => handleImageClick(item.id)}
               style={[styles.container]}
             >
               <View style={[styles.container, styles.imageContainer]}>

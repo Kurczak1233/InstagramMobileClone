@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { View, TextInput } from "react-native";
 import * as yup from "yup";
 
+import { queryClient } from "../../../App";
 import {
   CameraComponent,
   NewPostOverviewComponent,
@@ -38,6 +39,7 @@ export const CreatePostScreen = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ICreatePost>({
     defaultValues: {
@@ -57,6 +59,9 @@ export const CreatePostScreen = () => {
         .limit(1)
         .single();
       navigation.navigate("PlatformMain");
+      queryClient.invalidateQueries({ queryKey: ["postsData"] });
+      reset();
+      setImage(undefined);
     } catch (error) {
       console.log("Register went wrong", error);
     }
