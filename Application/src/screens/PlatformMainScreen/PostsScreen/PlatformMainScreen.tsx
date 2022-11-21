@@ -28,26 +28,6 @@ export const PlatformMainScreen = () => {
     },
   });
 
-  const createPost = useCallback(async () => {
-
-
-
-    // const response = await supaBaseclient
-    //   .from("posts")
-    //   .insert({
-    //     description: "test description 2",
-    //     image_url:
-    //       "https://cdn3s.com/wp-content/uploads/2022/03/This-Expressive-Disabled-Cat-Is-Here-To-Spread-Positivity-In-Our-World-Today01.jpg",
-    //   })
-    //   .limit(1)
-    //   .single();
-    // console.log(response);
-  }, []);
-
-  useEffect(() => {
-    createPost();
-  }, []);
-
   if (isLoading) {
     return (
       <View>
