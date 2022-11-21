@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   View,

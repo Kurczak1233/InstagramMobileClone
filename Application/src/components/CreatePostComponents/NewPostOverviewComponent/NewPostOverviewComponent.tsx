@@ -1,4 +1,5 @@
 import { CameraCapturedPicture } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import { Control, Controller, UseFormHandleSubmit } from "react-hook-form";
 import {
@@ -23,6 +24,9 @@ type INewPostOverviewComponent = {
   changeVisibleComponent: (component: INewPostComponent) => void;
   handleSubmit: UseFormHandleSubmit<ICreatePost>;
   submitForm: (data: ICreatePost) => Promise<void>;
+  setImage: React.Dispatch<
+    React.SetStateAction<CameraCapturedPicture | undefined>
+  >;
 };
 
 export const NewPostOverviewComponent = ({
@@ -32,7 +36,23 @@ export const NewPostOverviewComponent = ({
   changeVisibleComponent,
   handleSubmit,
   submitForm,
+  setImage,
 }: INewPostOverviewComponent) => {
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0] as any);
+      changeVisibleComponent(INewPostComponent.overview);
+    }
+  };
+
   return (
     <View>
       <Image
@@ -71,10 +91,11 @@ export const NewPostOverviewComponent = ({
       </KeyboardAvoidingView>
       <View style={styles.footerButtons}>
         <Button
-          title="Change picture"
+          title="Take picture"
           onPress={() => changeVisibleComponent(INewPostComponent.newPicture)}
         />
         <Button title="Save post" onPress={handleSubmit(submitForm)} />
+        <Button title="Camera roll" onPress={pickImage} />
       </View>
     </View>
   );

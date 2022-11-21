@@ -33,10 +33,6 @@ export const CameraComponent = ({
     }
   };
 
-  const changeToCameraRoll = () => {
-    changeVisibleComponent(INewPostComponent.cameraRoll);
-  };
-
   if (!permission) {
     return <View />;
   }
@@ -57,8 +53,7 @@ export const CameraComponent = ({
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.buttonsWrapper}>
             <Button title="Take Picture" onPress={takePicture} />
-            {/* <Button title="Flip Camera" onPress={toggleCameraType} /> */}
-            <Button title="Camera roll" onPress={changeToCameraRoll} />
+            <Button title="Flip Camera" onPress={toggleCameraType} />
           </TouchableOpacity>
         </View>
       </Camera>
