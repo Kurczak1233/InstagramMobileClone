@@ -5,8 +5,7 @@ import theme from "../../../theme/theme";
 export const styles = StyleSheet.create({
   image: {
     padding: theme.spacing.lg,
-    flex: 1,
-    minHeight: 250,
+    height: 250,
   },
   imageContainer: {
     padding: theme.spacing.sm,
@@ -15,9 +14,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  saveAreaContainer: {
-    flex: 1,
-  },
   textInput: {
     minHeight: 50,
     padding: 12,
@@ -25,5 +21,13 @@ export const styles = StyleSheet.create({
     borderColor: "#000ede",
     borderWidth: 1,
     marginBottom: 12,
+  },
+  likesAndAvatarsContainer: {
+    paddingVertical: theme.spacing.sm,
+  },
+  imageDetails: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

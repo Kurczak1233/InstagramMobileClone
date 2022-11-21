@@ -7,7 +7,6 @@ const useNavigateToPostPage = () => {
   const navigation =
     useNavigation<StackNavigationProp<PlatformMainParamList>>();
   const navigateToPostPage = (postId: number) => {
-    console.log(postId);
     navigation.navigate("PostDetails", { id: postId });
   };
 

@@ -1,6 +1,7 @@
+import { AntDesign } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -14,14 +15,17 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import * as yup from "yup";
 
+import { queryClient } from "../../../../App";
 import { createCommentForPost } from "../../../apiCalls/createCommentForPost";
+import { deleteDatabasePost } from "../../../apiCalls/deleteDatabasePost";
 import { getPostData } from "../../../apiCalls/getPostData";
+import { PlatformMainParamList } from "../../../components/Navigation/platformMainParamList";
 import { PostComment } from "../../../components/Posts";
 import { UserAvatar } from "../../../components/UserAvatar";
-import useKeyboardVisible from "../../../hooks/useIsKeyboardVisible";
 import { styles } from "./styles";
 type PostDetailsScreenRouteParams = {
   id: number;
@@ -42,8 +46,8 @@ const schema = yup.object().shape({
 });
 
 export const PostDetailsScreen = () => {
-  const tabBarHeight = useBottomTabBarHeight();
-  const { isKeyboardVisible } = useKeyboardVisible();
+  const navigation =
+    useNavigation<StackNavigationProp<PlatformMainParamList>>();
   const route =
     useRoute<RouteProp<Record<string, PostDetailsScreenRouteParams>, string>>();
   const { id } = route.params;
@@ -78,6 +82,16 @@ export const PostDetailsScreen = () => {
     }
   };
 
+  const deletePost = async () => {
+    try {
+      await deleteDatabasePost(post?.id);
+      navigation.navigate("Posts");
+      queryClient.invalidateQueries({ queryKey: ["postsData"] });
+    } catch (err) {
+      console.log("Deleting post went wrong", err);
+    }
+  };
+
   if (isLoading) {
     return (
       <View>
@@ -86,22 +100,26 @@ export const PostDetailsScreen = () => {
     );
   }
   return (
-    <View
-      style={[
-        styles.container,
-        { marginBottom: !isKeyboardVisible ? tabBarHeight : 0 },
-      ]}
-    >
+    <View style={[styles.container]}>
       <Image
         style={[styles.image]}
         source={{
           uri: post?.image_url,
         }}
       />
-      <UserAvatar userId={post?.creator_uuid} imageSize="small" />
-      <View>
-        <Text>14 Likes</Text>
-        <Text>Title: {post?.description}</Text>
+      <View style={styles.imageDetails}>
+        <View style={styles.likesAndAvatarsContainer}>
+          <UserAvatar userId={post?.creator_uuid} imageSize="small" />
+          <View>
+            <Text>14 Likes</Text>
+            <Text>Title: {post?.description}</Text>
+          </View>
+        </View>
+        <View>
+          <TouchableOpacity onPress={deletePost}>
+            <AntDesign name="delete" size={24} color="red" />
+          </TouchableOpacity>
+        </View>
       </View>
       <FlatList
         data={post?.comments as any[]}
@@ -115,10 +133,12 @@ export const PostDetailsScreen = () => {
           />
         )}
       />
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback
+        onPress={Keyboard.dismiss}
+        style={styles.container}
+      >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.container}
         >
           <Controller
             control={control}
