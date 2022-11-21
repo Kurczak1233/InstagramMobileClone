@@ -15,10 +15,10 @@ import {
 } from "react-native";
 
 import { queryClient } from "../../../App";
+import { getPostsData } from "../../apiCalls/getPostsData";
 import Header from "../../components/typography/Header";
 import useNavigateToPostPage from "../../hooks/useNavigateToPostPage";
 import theme from "../../theme/theme";
-import { supaBaseclient } from "../../utilities/supabaseClient";
 import { styles } from "./styles";
 
 type ISearchPosts = {
@@ -38,13 +38,7 @@ export const SearchPostScreen = () => {
     data: posts,
   } = useQuery({
     queryKey: ["postsData"],
-    queryFn: async () => {
-      const response = await supaBaseclient
-        .from("posts")
-        .select("*")
-        .is("archived_at", null);
-      return response.data;
-    },
+    queryFn: getPostsData,
   });
 
   const {
@@ -93,8 +87,12 @@ export const SearchPostScreen = () => {
 
   const handleImageClick = (itemId: number) => {
     navigateToPostPage(itemId);
-    queryClient.invalidateQueries({ queryKey: ["postData"] });
+    queryClient.invalidateQueries({
+      queryKey: ["postData", itemId],
+    });
   };
+
+  // queryFn: () => getPostData(itemId),
 
   if (isLoading) {
     return (

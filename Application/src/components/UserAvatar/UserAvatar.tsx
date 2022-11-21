@@ -2,7 +2,7 @@ import { Avatar } from "@react-native-material/core";
 import { useQuery } from "@tanstack/react-query";
 import { View, Text } from "react-native";
 
-import { supaBaseclient } from "../../utilities/supabaseClient";
+import { getCurrentUser } from "../../apiCalls/getCurrentUser";
 
 type IUserAvatar = {
   userId?: string;
@@ -22,15 +22,8 @@ export const UserAvatar = ({
     error,
     data: user,
   } = useQuery({
-    queryKey: ["userAvatar"],
-    queryFn: async () => {
-      const response = await supaBaseclient
-        .from("users")
-        .select()
-        .eq("uuid", userId)
-        .single();
-      return response.data;
-    },
+    queryKey: ["userAvatar", userId],
+    queryFn: ({ queryKey }) => getCurrentUser(queryKey[1]),
   });
 
   return (

@@ -8,6 +8,7 @@ import { View, TextInput } from "react-native";
 import * as yup from "yup";
 
 import { queryClient } from "../../../App";
+import { createPost } from "../../apiCalls/createPost";
 import {
   CameraComponent,
   NewPostOverviewComponent,
@@ -50,14 +51,7 @@ export const CreatePostScreen = () => {
 
   const submitForm = async (data: ICreatePost) => {
     try {
-      await supaBaseclient
-        .from("posts")
-        .insert({
-          description: data.title,
-          image_url: image?.uri,
-        })
-        .limit(1)
-        .single();
+      await createPost(image, data);
       navigation.navigate("PlatformMain");
       queryClient.invalidateQueries({ queryKey: ["postsData"] });
       reset();

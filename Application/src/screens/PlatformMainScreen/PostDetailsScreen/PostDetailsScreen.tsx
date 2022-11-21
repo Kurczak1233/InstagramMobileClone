@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import * as yup from "yup";
 
+import { getPostData } from "../../../apiCalls/getPostData";
 import { PostComment } from "../../../components/Posts";
 import { UserAvatar } from "../../../components/UserAvatar";
 import useKeyboardVisible from "../../../hooks/useIsKeyboardVisible";
@@ -53,18 +54,8 @@ export const PostDetailsScreen = () => {
     refetch,
     data: post,
   } = useQuery({
-    queryKey: ["postData"],
-    queryFn: async () => {
-      const response = await supaBaseclient
-        .from("posts")
-        .select(
-          "id, created_at, description, creator_uuid, image_url, comments ( body, creator_uuid, id )"
-        )
-        .eq("id", id)
-        .is("archived_at", null)
-        .single();
-      return response.data;
-    },
+    queryKey: ["postData", id],
+    queryFn: ({ queryKey }) => getPostData(+queryKey[1]),
   });
 
   const {

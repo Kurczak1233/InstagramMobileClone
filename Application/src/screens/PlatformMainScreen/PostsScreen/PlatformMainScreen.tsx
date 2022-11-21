@@ -1,12 +1,12 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useQuery } from "@tanstack/react-query";
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { View, FlatList, Text } from "react-native";
 
+import { getPostsData } from "../../../apiCalls/getPostsData";
 import { TopUserBar } from "../../../components/PlatformMain";
 import { PostOverview } from "../../../components/Posts/PostOverview/PostOverview";
 import useKeyboardVisible from "../../../hooks/useIsKeyboardVisible";
-import { supaBaseclient } from "../../../utilities/supabaseClient";
 import { styles } from "./styles";
 
 export const PlatformMainScreen = () => {
@@ -19,13 +19,7 @@ export const PlatformMainScreen = () => {
     data: posts,
   } = useQuery({
     queryKey: ["postsData"],
-    queryFn: async () => {
-      const response = await supaBaseclient
-        .from("posts")
-        .select("*")
-        .is("archived_at", null);
-      return response.data;
-    },
+    queryFn: getPostsData,
   });
 
   if (isLoading) {
