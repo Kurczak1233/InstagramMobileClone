@@ -10,6 +10,7 @@ import * as yup from "yup";
 import { queryClient } from "../../../App";
 import {
   CameraComponent,
+  CameraRollComponent,
   NewPostOverviewComponent,
 } from "../../components/CreatePostComponents";
 import { StackTabsParamList } from "../../components/Navigation/stackTabsParamsList";
@@ -27,6 +28,7 @@ export type ICreatePost = {
 export enum INewPostComponent {
   overview,
   newPicture,
+  cameraRoll,
 }
 
 export const CreatePostScreen = () => {
@@ -89,6 +91,12 @@ export const CreatePostScreen = () => {
       )}
       {componentVisibility === INewPostComponent.newPicture && (
         <CameraComponent
+          setImage={setImage}
+          changeVisibleComponent={changeVisibleComponent}
+        />
+      )}
+      {componentVisibility === INewPostComponent.cameraRoll && (
+        <CameraRollComponent
           setImage={setImage}
           changeVisibleComponent={changeVisibleComponent}
         />

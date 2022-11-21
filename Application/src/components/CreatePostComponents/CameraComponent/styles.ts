@@ -24,4 +24,10 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
+  buttonsWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignSelf: "flex-end",
+    alignItems: "center",
+  },
 });

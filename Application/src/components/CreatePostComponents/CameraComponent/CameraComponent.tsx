@@ -4,8 +4,7 @@ import { View, Text, TouchableOpacity, Button } from "react-native";
 
 import { INewPostComponent } from "../../../screens/CreatePostScreen/CreatePostScreen";
 import { styles } from "./styles";
-
-type ICameraComponet = {
+type ICameraComponent = {
   setImage: React.Dispatch<
     React.SetStateAction<CameraCapturedPicture | undefined>
   >;
@@ -15,7 +14,7 @@ type ICameraComponet = {
 export const CameraComponent = ({
   setImage,
   changeVisibleComponent,
-}: ICameraComponet) => {
+}: ICameraComponent) => {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const cameraRef = useRef<Camera>(null);
@@ -29,10 +28,13 @@ export const CameraComponent = ({
   const takePicture = async () => {
     if (cameraRef && cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      console.log(photo);
       setImage(photo);
       changeVisibleComponent(INewPostComponent.overview);
     }
+  };
+
+  const changeToCameraRoll = () => {
+    changeVisibleComponent(INewPostComponent.cameraRoll);
   };
 
   if (!permission) {
@@ -53,12 +55,10 @@ export const CameraComponent = ({
     <View style={styles.container}>
       <Camera style={styles.camera} type={type} ref={cameraRef}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-            <Text style={styles.text}>Flip Camera</Text>
-            <Button title="Take Picture" onPress={() => takePicture()} />
-            {/* {image && (
-              <Image source={{ uri: image as any }} style={{ flex: 1 }} />
-            )} */}
+          <TouchableOpacity style={styles.buttonsWrapper}>
+            <Button title="Take Picture" onPress={takePicture} />
+            {/* <Button title="Flip Camera" onPress={toggleCameraType} /> */}
+            <Button title="Camera roll" onPress={changeToCameraRoll} />
           </TouchableOpacity>
         </View>
       </Camera>
