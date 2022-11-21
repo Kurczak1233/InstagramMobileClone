@@ -14,7 +14,6 @@ import {
   NewPostOverviewComponent,
 } from "../../components/CreatePostComponents";
 import { StackTabsParamList } from "../../components/Navigation/stackTabsParamsList";
-import { supaBaseclient } from "../../utilities/supabaseClient";
 import { styles } from "./styles";
 
 const schema = yup.object().shape({

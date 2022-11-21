@@ -17,11 +17,11 @@ import {
 } from "react-native";
 import * as yup from "yup";
 
+import { createCommentForPost } from "../../../apiCalls/createCommentForPost";
 import { getPostData } from "../../../apiCalls/getPostData";
 import { PostComment } from "../../../components/Posts";
 import { UserAvatar } from "../../../components/UserAvatar";
 import useKeyboardVisible from "../../../hooks/useIsKeyboardVisible";
-import { supaBaseclient } from "../../../utilities/supabaseClient";
 import { styles } from "./styles";
 type PostDetailsScreenRouteParams = {
   id: number;
@@ -71,14 +71,7 @@ export const PostDetailsScreen = () => {
 
   const createPostComment = async (body: ICreateComment) => {
     try {
-      await supaBaseclient
-        .from("comments")
-        .insert({
-          body: body.description,
-          post_id: id,
-        })
-        .limit(1)
-        .single();
+      await createCommentForPost(body.description, post?.id);
       refetch();
     } catch (error) {
       console.log(error);
