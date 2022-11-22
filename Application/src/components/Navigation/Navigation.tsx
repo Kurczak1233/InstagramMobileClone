@@ -94,17 +94,6 @@ const MainTabs = () => (
 export const Navigation = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const handleUserLoggedCheck = useCallback(async () => {
-    const expiresIn = await getItem("tokenExpiresIn");
-    if (expiresIn && new Date() < new Date(expiresIn)) {
-      setIsLoggedIn(false);
-    }
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    handleUserLoggedCheck();
-  }, []);
 
   const settingLoggedInToTrue = () => {
     setIsLoggedIn(true);
@@ -113,11 +102,10 @@ export const Navigation = () => {
   useEffect(() => {
     const appStateListener = AppState.addEventListener("change", async () => {
       const expiresIn = await getItem("tokenExpiresIn");
-      if (expiresIn) {
-        if (new Date().getTime() > +expiresIn) {
-          setIsLoggedIn(false);
-        }
+      if ((expiresIn && new Date().getTime() > +expiresIn) || !expiresIn) {
+        setIsLoggedIn(false);
       }
+      setIsLoading(false);
     });
     return () => {
       appStateListener?.remove();
