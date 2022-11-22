@@ -9,7 +9,7 @@ interface IBodyChildren {
   variant: "large" | "small";
 }
 
-export default function Error({ children, variant }: IBodyChildren) {
+export function Error({ children, variant }: IBodyChildren) {
   return (
     <Text style={[styles.text, styles[variant], { color: theme.colors.error }]}>
       {children}

@@ -20,7 +20,7 @@ import { getItem } from "../../utilities/storage";
 import { RootStackParamList } from "./RootStackParamList";
 import { PlatformMainParamList } from "./platformMainParamList";
 import { StackTabsParamList } from "./stackTabsParamsList";
-import { isAfter } from "date-fns";
+import { Header } from "@react-navigation/stack";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<StackTabsParamList>();
@@ -106,7 +106,6 @@ export const Navigation = () => {
     handleUserLoggedCheck();
   }, []);
 
-  // const { setIsLoggedInMethod } = useContext(appStateContext);
   const settingLoggedInToTrue = () => {
     setIsLoggedIn(true);
   };
@@ -145,6 +144,9 @@ export const Navigation = () => {
                 <Stack.Screen
                   name="Introduction"
                   component={IntroductionScreen}
+                  options={{
+                    headerShown: false,
+                  }}
                 />
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Register" component={RegisterScreen} />
