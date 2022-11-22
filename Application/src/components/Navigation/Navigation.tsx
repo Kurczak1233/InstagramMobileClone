@@ -4,9 +4,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text } from "react-native";
+import { View, Text, AppState } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { appStateContext } from "../../contexts/AppStateContextProvider";
 import { CreatePostScreen } from "../../screens/CreatePostScreen/CreatePostScreen";
 import { IntroductionScreen } from "../../screens/IntroductionScreen/IntroductionScreen";
 import { LoginScreen } from "../../screens/LoginScreen/LoginScreen";
@@ -15,10 +16,11 @@ import { PostDetailsScreen } from "../../screens/PlatformMainScreen/PostDetailsS
 import { PlatformMainScreen } from "../../screens/PlatformMainScreen/PostsScreen/PlatformMainScreen";
 import { RegisterScreen } from "../../screens/RegisterScreen/RegisterScreen";
 import { SearchPostScreen } from "../../screens/SearchPostScreen/SearchPostScreen";
-import { getValueFor } from "../../utilities/secureStorage";
+import { getItem } from "../../utilities/storage";
 import { RootStackParamList } from "./RootStackParamList";
 import { PlatformMainParamList } from "./platformMainParamList";
 import { StackTabsParamList } from "./stackTabsParamsList";
+import { isAfter } from "date-fns";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<StackTabsParamList>();
@@ -92,15 +94,35 @@ const MainTabs = () => (
 export const Navigation = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const handleUserLoggedCheck = useCallback(async () => {
-    const accessToken = await getValueFor("accees_token");
-    setIsLoggedIn(accessToken !== undefined && accessToken !== "");
+    const expiresIn = await getItem("tokenExpiresIn");
+    if (expiresIn && new Date() < new Date(expiresIn)) {
+      setIsLoggedIn(false);
+    }
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
     handleUserLoggedCheck();
+  }, []);
+
+  // const { setIsLoggedInMethod } = useContext(appStateContext);
+  const settingLoggedInToTrue = () => {
+    setIsLoggedIn(true);
+  };
+
+  useEffect(() => {
+    const appStateListener = AppState.addEventListener("change", async () => {
+      const expiresIn = await getItem("tokenExpiresIn");
+      if (expiresIn) {
+        if (new Date().getTime() > +expiresIn) {
+          setIsLoggedIn(false);
+        }
+      }
+    });
+    return () => {
+      appStateListener?.remove();
+    };
   }, []);
 
   if (isLoading) {
@@ -112,27 +134,31 @@ export const Navigation = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          {!isLoggedIn ? (
-            <>
+    <appStateContext.Provider
+      value={{ setIsLoggedInMethod: settingLoggedInToTrue }}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            {!isLoggedIn ? (
+              <>
+                <Stack.Screen
+                  name="Introduction"
+                  component={IntroductionScreen}
+                />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="Register" component={RegisterScreen} />
+              </>
+            ) : (
               <Stack.Screen
-                name="Introduction"
-                component={IntroductionScreen}
+                name="MainTabs"
+                component={MainTabs}
+                options={{ headerShown: false }}
               />
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
-            </>
-          ) : (
-            <Stack.Screen
-              name="MainTabs"
-              component={MainTabs}
-              options={{ headerShown: false }}
-            />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </appStateContext.Provider>
   );
 };

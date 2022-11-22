@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   View,
@@ -18,7 +18,10 @@ import {
 import * as yup from "yup";
 
 import { RootStackParamList } from "../../components/Navigation/RootStackParamList";
+import { appStateContext } from "../../contexts/AppStateContextProvider";
+import { convertEpochToSpecificTimezone } from "../../helpers/convertEpochToSpecificTimezone";
 import { saveSecuredItem } from "../../utilities/secureStorage";
+import { setItem } from "../../utilities/storage";
 import { supaBaseclient } from "../../utilities/supabaseClient";
 
 const schema = yup.object().shape({
@@ -35,6 +38,8 @@ export const LoginScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const ref_email_input = useRef<TextInput>(null);
   const ref_password_input = useRef<TextInput>(null);
+
+  const { setIsLoggedInMethod } = useContext(appStateContext);
 
   const {
     control,
@@ -55,11 +60,16 @@ export const LoginScreen = () => {
         email: data.login,
         password: data.password,
       });
-      // TODO return error when the password does not match
       if (response.data && response.data.session?.access_token) {
-        saveSecuredItem("accees_token", response.data.session.access_token);
-        navigation.navigate("MainTabs");
-        return;
+        if (response.data && response.data.session.expires_at) {
+          const expireDate = convertEpochToSpecificTimezone(
+            response.data.session.expires_at * 1000
+          );
+          saveSecuredItem("accees_token", response.data.session.access_token);
+          setItem("tokenExpiresIn", expireDate.getTime().toString());
+          setIsLoggedInMethod();
+          return;
+        }
       }
       setError("password", {
         type: "custom",
