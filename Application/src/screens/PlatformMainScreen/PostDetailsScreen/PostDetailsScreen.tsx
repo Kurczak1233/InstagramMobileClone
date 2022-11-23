@@ -25,12 +25,14 @@ import { deleteDatabasePost } from "../../../apiCalls/deleteDatabasePost";
 import { getPostData } from "../../../apiCalls/getPostData";
 import { getPostLikes } from "../../../apiCalls/getPostLikes";
 import { giveLike } from "../../../apiCalls/giveLike";
+import { removeLike } from "../../../apiCalls/removeLike";
 import { PlatformMainParamList } from "../../../components/Navigation/platformMainParamList";
 import { PostComment } from "../../../components/Posts";
 import { UserAvatar } from "../../../components/UserAvatar";
 import Header from "../../../components/typography/Header";
 import Paragraph from "../../../components/typography/Paragraph";
 import theme from "../../../theme/theme";
+import { getItem } from "../../../utilities/storage";
 import { styles } from "./styles";
 type PostDetailsScreenRouteParams = {
   id: number;
@@ -107,8 +109,31 @@ export const PostDetailsScreen = () => {
 
   const giveLikeToPost = async () => {
     try {
-      await giveLike(post?.id);
-      queryClient.invalidateQueries({ queryKey: ["postLikes"] });
+      const userId = await getItem("userId");
+      const postLikesArray = postLikes as any[];
+
+      if (userId) {
+        const parsedJsonUserId = JSON.parse(userId);
+
+        const alreadyGivenLike = postLikesArray.find((item) => {
+          const creator_uuid: string = item.creator_uuid;
+          return creator_uuid === parsedJsonUserId;
+        });
+        console.log(
+          `alreadyGivenLike`,
+          alreadyGivenLike,
+          `postLikesArray`,
+          postLikesArray,
+          `userId`,
+          userId
+        );
+        if (!alreadyGivenLike) {
+          await giveLike(post?.id);
+          return queryClient.invalidateQueries({ queryKey: ["postLikes"] });
+        }
+        await removeLike(alreadyGivenLike.id);
+        return queryClient.invalidateQueries({ queryKey: ["postLikes"] });
+      }
     } catch (err) {
       console.log("Giving like went wrong", err);
     }

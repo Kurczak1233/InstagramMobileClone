@@ -64,9 +64,12 @@ export const LoginScreen = () => {
           const expireDate = convertEpochToSpecificTimezone(
             response.data.session.expires_at * 1000
           );
-          saveSecuredItem("accees_token", response.data.session.access_token);
-          setItem("tokenExpiresIn", expireDate.getTime().toString());
-          setIsLoggedInMethod();
+          if (expireDate) {
+            saveSecuredItem("accees_token", response.data.session.access_token);
+            setItem("userId", response.data.user?.id);
+            setItem("tokenExpiresIn", expireDate.getTime().toString());
+            setIsLoggedInMethod();
+          }
           return;
         }
       }
