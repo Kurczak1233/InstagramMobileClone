@@ -45,7 +45,7 @@ type ICreateComment = {
 export type IPostComment = {
   body: string;
   creator_uuid: string;
-  id: number;
+  commentId: number;
 };
 
 const schema = yup.object().shape({
@@ -185,7 +185,7 @@ export const PostDetailsScreen = () => {
           <PostComment
             body={item.body}
             creator_uuid={item.creator_uuid}
-            id={item.id}
+            commentId={item.id}
           />
         )}
       />
