@@ -1,7 +1,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { CameraCapturedPicture } from "expo-camera";
+import { decode } from "base64-arraybuffer";
+import { Camera, CameraCapturedPicture } from "expo-camera";
 import React, { useRef, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { View, TextInput } from "react-native";
@@ -14,8 +15,8 @@ import {
   NewPostOverviewComponent,
 } from "../../components/CreatePostComponents";
 import { StackTabsParamList } from "../../components/Navigation/stackTabsParamsList";
+import { supaBaseclient } from "../../utilities/supabaseClient";
 import { styles } from "./styles";
-
 const schema = yup.object().shape({
   title: yup.string().required(),
 });
@@ -35,6 +36,7 @@ export const CreatePostScreen = () => {
   const navigation = useNavigation<StackNavigationProp<StackTabsParamList>>();
 
   const ref_title_input = useRef<TextInput>(null);
+  const cameraRef = useRef<Camera>(null);
   const [image, setImage] = useState<CameraCapturedPicture>();
   const {
     control,
@@ -50,11 +52,24 @@ export const CreatePostScreen = () => {
 
   const submitForm = async (data: ICreatePost) => {
     try {
-      await createPost(image, data);
-      navigation.navigate("PlatformMain");
-      queryClient.invalidateQueries({ queryKey: ["postsData"] });
-      reset();
-      setImage(undefined);
+      if (image && image.base64) {
+        await supaBaseclient.storage
+          .from("images")
+          .upload(data.title, decode(image.base64), {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        const imageUrl = await supaBaseclient.storage
+          .from("images")
+          .getPublicUrl(data.title);
+
+        await createPost(imageUrl.data.publicUrl, data);
+        navigation.navigate("PlatformMain");
+        queryClient.invalidateQueries({ queryKey: ["postsData"] });
+        reset();
+        setImage(undefined);
+      }
     } catch (error) {
       console.log("Register went wrong", error);
     }
@@ -66,7 +81,6 @@ export const CreatePostScreen = () => {
 
   useEffect(() => {
     ref_title_input.current?.focus();
-    changeVisibleComponent(INewPostComponent.overview);
   }, []);
 
   return (
@@ -86,6 +100,7 @@ export const CreatePostScreen = () => {
         <CameraComponent
           setImage={setImage}
           changeVisibleComponent={changeVisibleComponent}
+          cameraRef={cameraRef}
         />
       )}
     </View>

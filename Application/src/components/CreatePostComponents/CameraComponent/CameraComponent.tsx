@@ -1,5 +1,5 @@
 import { CameraType, Camera, CameraCapturedPicture } from "expo-camera";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Button } from "react-native";
 
 import { INewPostComponent } from "../../../screens/CreatePostScreen/CreatePostScreen";
@@ -9,15 +9,16 @@ type ICameraComponent = {
     React.SetStateAction<CameraCapturedPicture | undefined>
   >;
   changeVisibleComponent: (component: INewPostComponent) => void;
+  cameraRef: React.RefObject<Camera>;
 };
 
 export const CameraComponent = ({
   setImage,
   changeVisibleComponent,
+  cameraRef,
 }: ICameraComponent) => {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
-  const cameraRef = useRef<Camera>(null);
 
   const toggleCameraType = () => {
     setType((current) =>
@@ -27,8 +28,9 @@ export const CameraComponent = ({
 
   const takePicture = async () => {
     if (cameraRef && cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
+      const photo = await cameraRef.current.takePictureAsync({ base64: true });
       setImage(photo);
+      changeVisibleComponent(INewPostComponent.overview);
     }
   };
 
