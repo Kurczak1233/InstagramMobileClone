@@ -9,16 +9,14 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   FlatList,
-  Image,
   Text,
-  TouchableHighlight,
 } from "react-native";
 
-import { queryClient } from "../../../App";
 import { getPostsData } from "../../apiCalls/getPostsData";
+import { PostsThreeRowsOverview } from "../../components/Posts/PostsThreeRowsOverview/PostsThreeRowsOverview";
 import Header from "../../components/typography/Header";
-import useNavigateToPostPage from "../../hooks/useNavigateToPostPage";
 import theme from "../../theme/theme";
+import { DbPost } from "../../types/DbPost";
 import { styles } from "./styles";
 
 type ISearchPosts = {
@@ -31,7 +29,6 @@ type IMockedUsers = {
 };
 
 export const SearchPostScreen = () => {
-  const { navigateToPostPage } = useNavigateToPostPage();
   const {
     isLoading,
     error,
@@ -68,11 +65,13 @@ export const SearchPostScreen = () => {
   ];
 
   const filteredPosts = useMemo(() => {
-    const postsAsArray = posts as any[];
-    const filteredItems = postsAsArray.filter((item) =>
-      item.description
-        .toLowerCase()
-        .includes(watch("searchPhrase").toLowerCase())
+    const postsAsArray = posts as DbPost[];
+    const filteredItems = postsAsArray.filter(
+      (item) =>
+        item.description &&
+        item.description
+          .toLowerCase()
+          .includes(watch("searchPhrase").toLowerCase())
     );
     return filteredItems ? filteredItems : [];
   }, [posts, watch("searchPhrase")]);
@@ -84,15 +83,6 @@ export const SearchPostScreen = () => {
     );
     return filteredItems ? filteredItems : [];
   }, [posts, watch("searchPhrase")]);
-
-  const handleImageClick = (itemId: number) => {
-    navigateToPostPage(itemId);
-    queryClient.invalidateQueries({
-      queryKey: ["postData", itemId],
-    });
-  };
-
-  // queryFn: () => getPostData(itemId),
 
   if (isLoading) {
     return (
@@ -132,28 +122,7 @@ export const SearchPostScreen = () => {
         <Header variant="h5" color={theme.colors.primary}>
           Posts
         </Header>
-        <FlatList
-          data={filteredPosts as any[]}
-          scrollEnabled
-          style={[styles.container]}
-          contentContainerStyle={styles.listContainer}
-          numColumns={3}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableHighlight
-              underlayColor={theme.colors.overlay}
-              onPress={() => handleImageClick(item.id)}
-              style={[styles.container]}
-            >
-              <View style={[styles.container, styles.imageContainer]}>
-                <Image
-                  style={styles.smallImage}
-                  source={{ uri: item.image_url }}
-                />
-              </View>
-            </TouchableHighlight>
-          )}
-        />
+        <PostsThreeRowsOverview filteredPosts={filteredPosts} />
       </View>
       <View style={styles.imagesWrapper}>
         <Header variant="h5" color={theme.colors.primary}>

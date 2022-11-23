@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import { View, Text } from "react-native";
-import { queryClient } from "../../../../App";
 
+import { queryClient } from "../../../../App";
 import { deleteComment } from "../../../apiCalls/deleteComment";
 import { IPostComment } from "../../../screens/PlatformMainScreen/PostDetailsScreen/PostDetailsScreen";
 import theme from "../../../theme/theme";
