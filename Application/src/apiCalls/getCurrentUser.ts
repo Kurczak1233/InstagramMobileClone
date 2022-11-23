@@ -7,6 +7,10 @@ export const getCurrentUser = async (userId: string | undefined) => {
       .select()
       .eq("uuid", userId)
       .single();
-    return response.data;
+
+    if (response.data) {
+      return response.data;
+    }
+    return null;
   }
 };

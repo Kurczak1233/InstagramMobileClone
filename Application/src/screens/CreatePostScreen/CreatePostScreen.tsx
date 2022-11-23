@@ -66,6 +66,7 @@ export const CreatePostScreen = () => {
 
   useEffect(() => {
     ref_title_input.current?.focus();
+    changeVisibleComponent(INewPostComponent.overview);
   }, []);
 
   return (

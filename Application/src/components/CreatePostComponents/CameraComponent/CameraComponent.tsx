@@ -29,7 +29,6 @@ export const CameraComponent = ({
     if (cameraRef && cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
       setImage(photo);
-      changeVisibleComponent(INewPostComponent.overview);
     }
   };
 

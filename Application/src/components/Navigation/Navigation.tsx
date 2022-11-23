@@ -3,7 +3,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, AppState } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -20,7 +20,6 @@ import { getItem } from "../../utilities/storage";
 import { RootStackParamList } from "./RootStackParamList";
 import { PlatformMainParamList } from "./platformMainParamList";
 import { StackTabsParamList } from "./stackTabsParamsList";
-import { Header } from "@react-navigation/stack";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator<StackTabsParamList>();

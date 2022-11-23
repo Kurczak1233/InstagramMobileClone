@@ -1,9 +1,7 @@
-import { Avatar } from "@react-native-material/core";
 import { useQuery } from "@tanstack/react-query";
-import { View, Text } from "react-native";
 
 import { getCurrentUser } from "../../apiCalls/getCurrentUser";
-import { styles } from "./styles";
+import { UserAvatarTemplate } from "./UserAvatarTemplate";
 
 type IUserAvatar = {
   userId?: string;
@@ -28,18 +26,10 @@ export const UserAvatar = ({
   });
 
   return (
-    <View
-      style={[
-        styles.imageContainer,
-        { minHeight: imageSize === "large" ? 100 : 50 },
-      ]}
-    >
-      <Avatar
-        size={imageSize === "large" ? 100 : 50}
-        image={{ uri: imageUrl }}
-        label={showUserName ? "Somebody" : ""}
-      />
-      {showUserName && <Text>Somebody</Text>}
-    </View>
+    <UserAvatarTemplate
+      imageSize={imageSize}
+      showUserName={showUserName}
+      imageUrl={imageUrl}
+    />
   );
 };
