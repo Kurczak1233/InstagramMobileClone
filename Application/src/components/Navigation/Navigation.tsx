@@ -3,11 +3,12 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, AppState } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { appStateContext } from "../../contexts/AppStateContextProvider";
+import { userIdStateContext } from "../../contexts/UserIdContextProvider";
 import { CreatePostScreen } from "../../screens/CreatePostScreen/CreatePostScreen";
 import { IntroductionScreen } from "../../screens/IntroductionScreen/IntroductionScreen";
 import { LoginScreen } from "../../screens/LoginScreen/LoginScreen";
@@ -40,56 +41,72 @@ function HomeStackScreen() {
   );
 }
 
-const MainTabs = () => (
-  <Tabs.Navigator
-    initialRouteName="PlatformMain"
-    screenOptions={{
-      headerShown: false,
-      tabBarHideOnKeyboard: true,
-    }}
-  >
-    <Tabs.Screen
-      name="PlatformMain"
-      component={HomeStackScreen}
-      options={{
-        tabBarLabel: "Main",
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name="home" color={color} size={size} />
-        ),
-      }}
-    />
-    <Tabs.Screen
-      name="SearchPosts"
-      component={SearchPostScreen}
-      options={{
-        tabBarLabel: "Search post",
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name="md-search" size={size} color={color} />
-        ),
-      }}
-    />
-    <Tabs.Screen
-      name="CreatePost"
-      component={CreatePostScreen}
-      options={{
-        tabBarLabel: "Create post",
-        tabBarIcon: ({ color, size }) => (
-          <MaterialIcons name="post-add" size={size} color={color} />
-        ),
-      }}
-    />
-    <Tabs.Screen
-      name="MyTimeLine"
-      component={MyTimeLine}
-      options={{
-        tabBarLabel: "My timeline",
-        tabBarIcon: ({ color, size }) => (
-          <FontAwesome name="user-circle-o" size={size} color={color} />
-        ),
-      }}
-    />
-  </Tabs.Navigator>
-);
+const MainTabs = () => {
+  const [userId, setUserId] = useState<string>("");
+  const getUserId = useCallback(async () => {
+    const userId = await getItem("userId");
+    if (userId) {
+      setUserId(JSON.parse(userId));
+    }
+  }, []);
+
+  useEffect(() => {
+    getUserId();
+  }, []);
+
+  return (
+    <userIdStateContext.Provider value={{ userId }}>
+      <Tabs.Navigator
+        initialRouteName="PlatformMain"
+        screenOptions={{
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+        }}
+      >
+        <Tabs.Screen
+          name="PlatformMain"
+          component={HomeStackScreen}
+          options={{
+            tabBarLabel: "Main",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="SearchPosts"
+          component={SearchPostScreen}
+          options={{
+            tabBarLabel: "Search post",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="md-search" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="CreatePost"
+          component={CreatePostScreen}
+          options={{
+            tabBarLabel: "Create post",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="post-add" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="MyTimeLine"
+          component={MyTimeLine}
+          options={{
+            tabBarLabel: "My timeline",
+            tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="user-circle-o" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tabs.Navigator>
+    </userIdStateContext.Provider>
+  );
+};
 export const Navigation = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -101,10 +118,15 @@ export const Navigation = () => {
   useEffect(() => {
     const appStateListener = AppState.addEventListener("change", async () => {
       const expiresIn = await getItem("tokenExpiresIn");
-      if ((expiresIn && new Date().getTime() > +expiresIn) || !expiresIn) {
-        setIsLoggedIn(false);
+      if (expiresIn) {
+        const parsedExpiresIn = JSON.parse(expiresIn);
+        if (new Date().getTime() > +parsedExpiresIn) {
+          setIsLoading(false);
+          return setIsLoggedIn(false);
+        }
+        setIsLoggedIn(true);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
     return () => {
       appStateListener?.remove();
