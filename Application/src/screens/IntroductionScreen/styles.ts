@@ -25,11 +25,11 @@ export const styles = StyleSheet.create({
     marginTop: theme.spacing.sm,
   },
   pawImage: {
-    width: 120,
-    height: 200,
+    width: 200,
+    height: 330,
     position: "absolute",
-    right: 60,
-    bottom: 10,
+    right: 80,
+    bottom: -140,
     zIndex: 20,
   },
 });

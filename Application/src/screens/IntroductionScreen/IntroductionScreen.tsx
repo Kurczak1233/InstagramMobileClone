@@ -5,7 +5,6 @@ import { View, Button, Image } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
@@ -50,7 +49,7 @@ export const IntroductionScreen = () => {
       />
       <Animated.Image
         source={{
-          uri: "https://zapodaj.net/images/4d529973a3f54.png",
+          uri: "https://zapodaj.net/images/801004e713353.png",
         }}
         style={[styles.pawImage, animatedStyles]}
       />
