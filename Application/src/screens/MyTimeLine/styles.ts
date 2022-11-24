@@ -16,4 +16,10 @@ export const styles = StyleSheet.create({
   post: {
     flex: 1,
   },
+  toggleWrapper: {
+    paddingHorizontal: theme.spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
 });

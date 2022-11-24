@@ -1,16 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
-import { View, Text } from "react-native";
+import React, { useContext, useState } from "react";
+import { View, Text, Switch } from "react-native";
 
 import { getPostsForUser } from "../../apiCalls/getPostsForUser";
-import { PostsThreeRowsOverview } from "../../components/Posts";
+import {
+  PostsFlatListOverview,
+  PostsThreeRowsOverview,
+} from "../../components/Posts";
 import { UserAvatar } from "../../components/UserAvatar";
 import Header from "../../components/typography/Header";
 import { userIdStateContext } from "../../contexts/UserIdContextProvider";
+import theme from "../../theme/theme";
 import { DbPost } from "../../types/DbPost";
 import { styles } from "./styles";
+import Body from "../../components/typography/Body";
 
 export const MyTimeLine = () => {
+  const [isEnabled, setIsEnabled] = useState<boolean>(false);
+  const toggleSwitch = () =>
+    setIsEnabled((previousState: boolean) => !previousState);
   const { userId } = useContext(userIdStateContext);
 
   const {
@@ -20,9 +28,8 @@ export const MyTimeLine = () => {
   } = useQuery({
     queryKey: ["userPostData", userId],
     queryFn: ({ queryKey }) => getPostsForUser(queryKey[1]),
+    staleTime: Infinity,
   });
-
-  console.log(userPosts);
 
   if (isLoading) {
     return (
@@ -44,8 +51,24 @@ export const MyTimeLine = () => {
           <Header variant="h5">Me</Header>
         </View>
       </View>
+      <View style={styles.toggleWrapper}>
+        <Body variant="large" color={theme.colors.primary}>
+          Show columns
+        </Body>
+        <Switch
+          trackColor={{ false: "#767577", true: "#81b0ff" }}
+          thumbColor={isEnabled ? "#81b7f1" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
+      </View>
       <View style={styles.post}>
-        <PostsThreeRowsOverview filteredPosts={userPosts as DbPost[]} />
+        {isEnabled ? (
+          <PostsThreeRowsOverview filteredPosts={userPosts as DbPost[]} />
+        ) : (
+          <PostsFlatListOverview posts={userPosts as DbPost[]} />
+        )}
       </View>
     </View>
   );
