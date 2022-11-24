@@ -45,10 +45,10 @@ export const NewPostOverviewComponent = ({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
-
     if (!result.canceled) {
-      setImage(result.assets[0] as any);
+      setImage(result as any);
       changeVisibleComponent(INewPostComponent.overview);
     }
   };

@@ -40,7 +40,7 @@ export const PostOverview = ({
             <View style={styles.likesWrapper}>
               <AntDesign name="like2" size={36} color={theme.colors.primary} />
               {/* The prop below should be received from database in the post list request. Creating workaround for that will be a performance issue */}
-              <Text> 14 Likes</Text>
+              <Text> {Math.round(Math.random() * 100)} Likes</Text>
             </View>
             <UserAvatar
               imageSize="tiny"
