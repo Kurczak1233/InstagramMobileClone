@@ -1,12 +1,13 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { View, FlatList, Text } from "react-native";
+import { View, Text } from "react-native";
 
 import { getPostsData } from "../../../apiCalls/getPostsData";
 import { TopUserBar } from "../../../components/PlatformMain";
-import { PostOverview } from "../../../components/Posts/PostOverview/PostOverview";
+import { PostsFlatListOverview } from "../../../components/Posts";
 import useKeyboardVisible from "../../../hooks/useIsKeyboardVisible";
+import { DbPost } from "../../../types/DbPost";
 import { styles } from "./styles";
 
 export const PlatformMainScreen = () => {
@@ -38,17 +39,7 @@ export const PlatformMainScreen = () => {
     >
       <TopUserBar />
       <View style={styles.post}>
-        <FlatList
-          data={posts}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <PostOverview
-              description={item.description}
-              imageUrl={item.image_url}
-              postId={item.id}
-            />
-          )}
-        />
+        <PostsFlatListOverview posts={posts as DbPost[]} />
       </View>
     </View>
   );
