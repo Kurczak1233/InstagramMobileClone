@@ -11,7 +11,17 @@ export const styles = StyleSheet.create({
   imageContainer: {
     paddingHorizontal: theme.spacing.sm,
     borderColor: theme.colors.primary,
+    borderRadius: 10,
     borderWidth: 1,
     margin: theme.spacing.sm,
+  },
+  description: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  likesWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
