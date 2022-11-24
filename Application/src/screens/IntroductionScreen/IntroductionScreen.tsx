@@ -2,6 +2,13 @@ import { useNavigation } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { View, Button, Image } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
 
 import { RootStackParamList } from "../../components/Navigation/RootStackParamList";
 import Header from "../../components/typography/Header";
@@ -10,6 +17,13 @@ import { styles } from "./styles";
 
 export const IntroductionScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const rotation = useSharedValue(0);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotateZ: `${rotation.value}deg` }],
+    };
+  });
 
   return (
     <View style={styles.welcomeContainer}>
@@ -22,11 +36,27 @@ export const IntroductionScreen = () => {
           onPress={() => navigation.navigate("Login")}
         />
       </View>
+      <Button
+        onPress={() => {
+          rotation.value = withRepeat(
+            withTiming(10, { x: 1.5, y: 0 }),
+            Infinity,
+            true
+          );
+        }}
+        title="Move"
+      />
       <Image
         source={{
-          uri: "https://img-13.stickers.cloud/packs/cd7d6ffc-b450-4ddd-a725-e376aa71aa6d/webp/4242143c-59d2-4871-a3b9-3448af8dfa65.webp",
+          uri: "https://zapodaj.net/images/cf365ec44b467.png",
         }}
         style={styles.imageBackground}
+      />
+      <Animated.Image
+        source={{
+          uri: "https://zapodaj.net/images/4d529973a3f54.png",
+        }}
+        style={[styles.pawImage, animatedStyles]}
       />
     </View>
   );
