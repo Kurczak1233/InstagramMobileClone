@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import { CameraType, Camera, CameraCapturedPicture } from "expo-camera";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Button } from "react-native";
@@ -19,6 +20,7 @@ export const CameraComponent = ({
 }: ICameraComponent) => {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const isFocused = useIsFocused();
 
   const toggleCameraType = () => {
     setType((current) =>
@@ -50,14 +52,16 @@ export const CameraComponent = ({
   }
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={cameraRef}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.buttonsWrapper}>
-            <Button title="Take Picture" onPress={takePicture} />
-            <Button title="Flip Camera" onPress={toggleCameraType} />
-          </TouchableOpacity>
-        </View>
-      </Camera>
+      {isFocused && (
+        <Camera style={styles.camera} type={type} ref={cameraRef}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.buttonsWrapper}>
+              <Button title="Take Picture" onPress={takePicture} />
+              <Button title="Flip Camera" onPress={toggleCameraType} />
+            </TouchableOpacity>
+          </View>
+        </Camera>
+      )}
     </View>
   );
 };

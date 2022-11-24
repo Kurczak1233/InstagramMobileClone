@@ -34,7 +34,6 @@ export const CreatePostScreen = () => {
   const [componentVisibility, setComponentVisibility] =
     useState<INewPostComponent>(INewPostComponent.overview);
   const navigation = useNavigation<StackNavigationProp<StackTabsParamList>>();
-
   const ref_title_input = useRef<TextInput>(null);
   const cameraRef = useRef<Camera>(null);
   const [image, setImage] = useState<CameraCapturedPicture>();
