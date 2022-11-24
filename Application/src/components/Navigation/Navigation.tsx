@@ -96,6 +96,7 @@ const MainTabs = () => {
         <Tabs.Screen
           name="MyTimeLine"
           component={MyTimeLine}
+          initialParams={{ userId: "" }}
           options={{
             tabBarLabel: "My timeline",
             tabBarIcon: ({ color, size }) => (

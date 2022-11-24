@@ -64,7 +64,7 @@ export const CreatePostScreen = () => {
           .getPublicUrl(data.title);
 
         await createPost(imageUrl.data.publicUrl, data);
-        navigation.navigate("PlatformMain");
+        navigation.navigate("PlatformMain", {});
         queryClient.invalidateQueries({ queryKey: ["postsData"] });
         reset();
         setImage(undefined);

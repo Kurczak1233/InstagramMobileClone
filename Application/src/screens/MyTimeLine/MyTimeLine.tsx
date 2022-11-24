@@ -1,3 +1,4 @@
+import { useRoute, RouteProp } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext, useState } from "react";
 import { View, Text, Switch } from "react-native";
@@ -8,19 +9,24 @@ import {
   PostsThreeRowsOverview,
 } from "../../components/Posts";
 import { UserAvatar } from "../../components/UserAvatar";
+import Body from "../../components/typography/Body";
 import Header from "../../components/typography/Header";
 import { userIdStateContext } from "../../contexts/UserIdContextProvider";
 import theme from "../../theme/theme";
 import { DbPost } from "../../types/DbPost";
 import { styles } from "./styles";
-import Body from "../../components/typography/Body";
+
+export type MyTimeLineParams = {
+  userId: number;
+};
 
 export const MyTimeLine = () => {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const toggleSwitch = () =>
     setIsEnabled((previousState: boolean) => !previousState);
   const { userId } = useContext(userIdStateContext);
-
+  const route = useRoute<RouteProp<Record<string, MyTimeLineParams>, string>>();
+  const { userId: receivedUserId } = route.params;
   const {
     isLoading,
     error,

@@ -1,13 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { Avatar } from "@react-native-material/core";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 
-import { getCurrentUser } from "../../apiCalls/getCurrentUser";
-import { UserAvatarTemplate } from "./UserAvatarTemplate";
+import { StackTabsParamList } from "../Navigation/stackTabsParamsList";
+import { styles } from "./styles";
 
 type IUserAvatar = {
   userId?: string;
   showUserName?: boolean;
   imageUrl?: string;
   imageSize: "tiny" | "small" | "large";
+  nameOrientation?: "horizontal" | "vertical";
 };
 
 export const UserAvatar = ({
@@ -15,21 +20,43 @@ export const UserAvatar = ({
   imageSize,
   imageUrl,
   showUserName = true,
+  nameOrientation = "vertical",
 }: IUserAvatar) => {
-  const {
-    isLoading,
-    error,
-    data: user,
-  } = useQuery({
-    queryKey: ["userAvatar", userId],
-    queryFn: ({ queryKey }) => getCurrentUser(queryKey[1]),
-  });
+  const navigation = useNavigation<StackNavigationProp<StackTabsParamList>>();
+  
+  // User data
+  // const {
+  //   isLoading,
+  //   error,
+  //   data: user,
+  // } = useQuery({
+  //   queryKey: ["userAvatar", userId],
+  //   queryFn: ({ queryKey }) => getCurrentUser(queryKey[1]),
+  // });
+
+  const navigateToUserProfile = () => {
+    navigation.navigate("MyTimeLine", { userId: userId || "" });
+  };
 
   return (
-    <UserAvatarTemplate
-      imageSize={imageSize}
-      showUserName={showUserName}
-      imageUrl={imageUrl}
-    />
+    <View
+      style={[
+        styles.imageContainer,
+        styles[nameOrientation],
+        {
+          minHeight:
+            imageSize === "large" ? 100 : imageSize === "tiny" ? 25 : 50,
+        },
+      ]}
+    >
+      <TouchableOpacity onPress={navigateToUserProfile}>
+        <Avatar
+          size={imageSize === "large" ? 100 : imageSize === "tiny" ? 25 : 50}
+          image={{ uri: imageUrl }}
+          label={showUserName ? "Somebody" : ""}
+        />
+      </TouchableOpacity>
+      {showUserName && <Text style={styles.userName}>Somebody</Text>}
+    </View>
   );
 };

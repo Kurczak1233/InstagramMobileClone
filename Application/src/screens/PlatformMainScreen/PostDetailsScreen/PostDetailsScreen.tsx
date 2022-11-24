@@ -119,14 +119,6 @@ export const PostDetailsScreen = () => {
           const creator_uuid: string = item.creator_uuid;
           return creator_uuid === parsedJsonUserId;
         });
-        console.log(
-          `alreadyGivenLike`,
-          alreadyGivenLike,
-          `postLikesArray`,
-          postLikesArray,
-          `userId`,
-          userId
-        );
         if (!alreadyGivenLike) {
           await giveLike(post?.id);
           return queryClient.invalidateQueries({ queryKey: ["postLikes"] });

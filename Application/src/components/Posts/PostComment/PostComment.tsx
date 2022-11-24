@@ -1,11 +1,12 @@
 import { Feather } from "@expo/vector-icons";
+import React from "react";
 import { View, Text } from "react-native";
 
 import { queryClient } from "../../../../App";
 import { deleteComment } from "../../../apiCalls/deleteComment";
 import { IPostComment } from "../../../screens/PlatformMainScreen/PostDetailsScreen/PostDetailsScreen";
 import theme from "../../../theme/theme";
-import { UserAvatarTemplate } from "../../UserAvatar";
+import { UserAvatar } from "../../UserAvatar";
 import { styles } from "./styles";
 export const PostComment = ({
   body,
@@ -23,7 +24,7 @@ export const PostComment = ({
 
   return (
     <View style={styles.commentsWrapper} data-test-id={`Comment${commentId}`}>
-      <UserAvatarTemplate imageSize="tiny" nameOrientation="horizontal" />
+      <UserAvatar imageSize="tiny" nameOrientation="horizontal" />
       <View style={styles.commentTextWrapper}>
         <Text style={styles.commentText}>{body}</Text>
         <Feather
