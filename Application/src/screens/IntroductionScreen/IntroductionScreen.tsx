@@ -38,11 +38,7 @@ export const IntroductionScreen = () => {
       </View>
       <Button
         onPress={() => {
-          rotation.value = withRepeat(
-            withTiming(10, { x: 1.5, y: 0 }),
-            Infinity,
-            true
-          );
+          rotation.value = withRepeat(withTiming(10), Infinity, true);
         }}
         title="Move"
       />
