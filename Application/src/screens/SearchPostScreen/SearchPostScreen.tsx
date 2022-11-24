@@ -94,28 +94,30 @@ export const SearchPostScreen = () => {
   return (
     <View style={[styles.container]}>
       <View>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView
+        <TouchableWithoutFeedback
+          onPress={Keyboard.dismiss}
+        >
+          {/* <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={[styles.smallPadding]}
-          >
-            <Controller
-              control={control}
-              name="searchPhrase"
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  style={styles.textInput}
-                  value={value}
-                  autoCapitalize="words"
-                  autoComplete="off"
-                  onChangeText={onChange}
-                  blurOnSubmit={false}
-                  returnKeyType="next"
-                  placeholder="Search..."
-                />
-              )}
-            />
-          </KeyboardAvoidingView>
+            
+          > */}
+          <Controller
+            control={control}
+            name="searchPhrase"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                style={styles.textInput}
+                value={value}
+                autoCapitalize="words"
+                autoComplete="off"
+                onChangeText={onChange}
+                blurOnSubmit={false}
+                returnKeyType="next"
+                placeholder="Search..."
+              />
+            )}
+          />
+          {/* </KeyboardAvoidingView> */}
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.imagesWrapper}>

@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
     borderColor: "#000ede",
     borderWidth: 1,
     marginBottom: 12,
+    marginTop: 12,
   },
   imageWrapper: {
     minHeight: 300,

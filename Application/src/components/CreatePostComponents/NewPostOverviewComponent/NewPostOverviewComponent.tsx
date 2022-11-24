@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Button,
+  ScrollView,
 } from "react-native";
 
 import {
@@ -55,39 +56,42 @@ export const NewPostOverviewComponent = ({
 
   return (
     <View>
-      <Image
-        style={styles.image}
-        source={{
-          uri: image
-            ? image.uri
-            : "https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg",
-        }}
-      />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <Controller
-          control={control}
-          name="title"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              style={styles.textInput}
-              ref={ref_title_input}
-              value={value}
-              onSubmitEditing={() => {
-                if (ref_title_input.current) {
-                  ref_title_input.current.focus();
-                }
-              }}
-              autoCapitalize="words"
-              onChangeText={onChange}
-              blurOnSubmit={false}
-              returnKeyType="next"
-              placeholder="Title..."
-            />
-          )}
-        />
+        <ScrollView>
+          <Image
+            style={styles.image}
+            source={{
+              uri: image
+                ? image.uri
+                : "https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg",
+            }}
+          />
+
+          <Controller
+            control={control}
+            name="title"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                style={styles.textInput}
+                ref={ref_title_input}
+                value={value}
+                onSubmitEditing={() => {
+                  if (ref_title_input.current) {
+                    ref_title_input.current.focus();
+                  }
+                }}
+                autoCapitalize="words"
+                onChangeText={onChange}
+                blurOnSubmit={false}
+                returnKeyType="next"
+                placeholder="Title..."
+              />
+            )}
+          />
+        </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.footerButtons}>
         <Button

@@ -10,13 +10,14 @@ export const styles = StyleSheet.create({
     borderColor: "#000ede",
     borderWidth: 1,
     marginBottom: 12,
+    marginHorizontal: theme.spacing.sm,
   },
   smallPadding: {
     padding: theme.spacing.sm,
   },
   imagesWrapper: {
     padding: theme.spacing.sm,
-    flex: 1,
+    height: 300,
   },
   imageContainer: {
     marginHorizontal: 10,
