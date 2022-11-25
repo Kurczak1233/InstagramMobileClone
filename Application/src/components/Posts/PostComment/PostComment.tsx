@@ -30,7 +30,7 @@ export const PostComment = ({
         <Feather
           onPress={handleDeleteComment}
           name="delete"
-          size={16}
+          size={24}
           color={theme.colors.error}
         />
       </View>
